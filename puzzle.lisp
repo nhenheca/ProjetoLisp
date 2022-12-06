@@ -1,21 +1,57 @@
 
-;;;MIGUEL ########################################################
+;;;MIGUEL GABRIEL MARQUES ########################################################
 
+;;Devolve o valor da heuristica de acordo com o estado do nó
 (defun heuristica (no)
   0
 )
 
- "Retorna um tabuleiro 3x3 (3 arcos na vertical por 3 arcos na horizontal) Profundidade Heuristica Pai"
+;;;Retorna um tabuleiro 3x3 (3 arcos na vertical por 3 arcos na horizontal) Profundidade Heuristica Pai"
 (defun no-teste ()
  (list (tabuleiro-teste) 0 (heuristica (tabuleiro-teste)) nil)
 )
 
-;;; SELETORES ;;;
-(defun tabuleiro (no)
+;;;Seleciona dentro do no o tabuleiro
+(defun no-estado (no)
  (car no)
 )
 
-;;;MIGUEL #########################################################
+;;;Devolve a lista de operadores
+(defun operadores()
+ (list 'arco-horizontal 'arco-vertical)
+)
+
+(defun no-profundidade (no-teste)
+ (second no-teste)
+)
+
+(defun no-pai (no-teste)
+ (fourth no-teste)
+)
+
+(defun no-heuristica (no-teste)
+ (third no-teste)
+)
+
+(defun no-custo(no-teste)
+  (+ (no-profundidade no-teste) (no-heuristica no-teste))
+)
+
+;;;Construtor
+(defun cria-no (tabuleiro h &optional (g 0)(pai nil))
+ (list tabuleiro g h pai)
+)
+
+(defun novo-sucessor (no func h)
+  (cond ((null (funcall func (no-estado no))) nil)
+        (t (list (list (funcall func (no-estado no)) (+ 1 (no-profundidade no)) (funcall h (funcall func (no-estado no))) no))))
+)
+
+(defun sucessores (no operadores h)
+  (apply 'append (apply 'append (mapcar #'(lambda (func) (cons (novo-sucessor no func h) nil)) operadores)))
+)
+
+;;;MIGUEL GABRIEL MARQUES #########################################################
 
 ;;; Tabuleiro
  "Retorna um tabuleiro 3x3 (3 arcos na vertical por 3 arcos na horizontal)"
@@ -30,13 +66,13 @@
 ;;;(get-arcos-horizontais (no-teste))
 ;;;((0 0 0) (0 0 1) (0 1 1) (0 0 1))
 (defun get-arcos-horizontais(no)
- (car (tabuleiro no))
+ (car (no-estado no))
 )
 
 ;;;(get-arcos-verticais (no-teste))
 ;;;((0 0 0) (0 1 1) (1 0 1) (0 1 1))
 (defun get-arcos-verticais(no)
- (car (cdr (tabuleiro no)))
+ (car (cdr (no-estado no)))
 )
 
 ;;(get-arco-na-posicao 2 3 (get-arcos-horizontais (no-teste)))
@@ -59,7 +95,7 @@
 
 ;;;(arco-na-posicao 2 2 (get-arcos-horizontais (no-teste)))
 ;;;((0 0 0) (0 1 1) (0 1 1) (0 0 1))
-;;;(arco-na-posicao 4 1 (get-arcos-verticais (tabuleiro-teste)))
+;;;(arco-na-posicao 4 1 (get-arcos-verticais (no-teste)))
 ;;;((0 0 0) (0 1 1) (1 0 1) (1 1 1))
 (defun arco-na-posicao (x y l &optional (z 1))
  (cond
@@ -69,18 +105,23 @@
 )
 
 ;;; OPERADORES ;;;
+;;;(arco-horizontal 3 1 (get-arcos-verticais (no-teste)))
+;;;((0 0 0) (0 0 1) (1 1 1) (0 0 1) (0 0 0) (0 1 1) (1 0 1) (0 1 1))
 (defun arco-horizontal (pos i l &optional (z 1))
  (cond
-  ((equal nil (get-arco-na-posicao pos i (get-arcos-horizontais (tabuleiro-teste)))) nil)
-  ((= 1 (get-arco-na-posicao pos i (get-arcos-horizontais (tabuleiro-teste)))) nil)
-  (t (append (arco-na-posicao pos i (get-arcos-horizontais (tabuleiro-teste)) z)  l))
+  ((equal nil (get-arco-na-posicao pos i (get-arcos-horizontais (no-teste)))) nil)
+  ((= 1 (get-arco-na-posicao pos i (get-arcos-horizontais (no-teste)))) nil)
+  (t (list (arco-na-posicao pos i (get-arcos-horizontais (no-teste)) z)  l))
  )
 )
 
+;;TODO
+;;;(arco-vertical 1 2 (get-arcos-verticais (no-teste)))
+;;;
 (defun arco-vertical (pos i l &optional (z 1))
  (cond
-  ((equal nil (get-arco-na-posicao pos i (get-arcos-verticais (tabuleiro-teste)))) nil)
-  ((= 1 (get-arco-na-posicao pos i (get-arcos-verticais (tabuleiro-teste)))) nil)
-  (t (append (arco-na-posicao pos i (get-arcos-verticais (tabuleiro-teste)) z)  l))
+  ((equal nil (get-arco-na-posicao pos i (get-arcos-verticais (no-teste)))) nil)
+  ((= 1 (get-arco-na-posicao pos i (get-arcos-verticais (no-teste)))) nil)
+  (t (list (arco-na-posicao pos i (get-arcos-verticais (no-teste)) z)  l))
  )
 )
