@@ -1,3 +1,7 @@
+;;;TESTING
+(defun funcall-test-soma (x y z)
+ (+ x y z)
+)
 
 ;;;MIGUEL GABRIEL MARQUES ########################################################
 
@@ -42,15 +46,13 @@
  (list tabuleiro g h pai)
 )
 
-(defun novo-sucessor (no func h)
-  (cond ((null (funcall func (no-estado no))) nil)
-        (t (list (list (funcall func (no-estado no)) (+ 1 (no-profundidade no)) (funcall h (funcall func (no-estado no))) no))))
+(defun novo-sucessor (no op)
+ (cria-no (funcall op) (+ 1 (no-profundidade no)) 0 no)
 )
 
-(defun sucessores (no operadores h)
-  (apply 'append (apply 'append (mapcar #'(lambda (func) (cons (novo-sucessor no func h) nil)) operadores)))
+(defun sucessores (no opsList algName h &optional depth)
+ (list (mapcar #'(lambda (op) (novo-sucessor no op))))
 )
-
 ;;;MIGUEL GABRIEL MARQUES #########################################################
 
 ;;; Tabuleiro
@@ -115,13 +117,12 @@
  )
 )
 
-;;TODO
 ;;;(arco-vertical 1 2 (get-arcos-verticais (no-teste)))
-;;;
+;;;(((0 0 0) (0 0 1) (0 1 1) (0 0 1))((0 1 0) (0 1 1) (1 0 1) (0 1 1)))
 (defun arco-vertical (pos i l &optional (z 1))
  (cond
   ((equal nil (get-arco-na-posicao pos i (get-arcos-verticais (no-teste)))) nil)
   ((= 1 (get-arco-na-posicao pos i (get-arcos-verticais (no-teste)))) nil)
-  (t (list (arco-na-posicao pos i (get-arcos-verticais (no-teste)) z)  l))
+  (t (list l (arco-na-posicao pos i (get-arcos-verticais (no-teste)) z)))
  )
 )
