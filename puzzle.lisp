@@ -5,6 +5,13 @@
 
 ;;;MIGUEL GABRIEL MARQUES ########################################################
 
+(defun n-caixas-fechadas (tabuleiro &optional (x 0)(y 0)(count 0))
+ (cond
+  (())
+  (())
+ )
+)
+
 ;;Devolve o valor da heuristica de acordo com o estado do nó
 (defun heuristica (no)
   0
@@ -50,8 +57,8 @@
  (cria-no (funcall op) (+ 1 (no-profundidade no)) 0 no)
 )
 
-(defun sucessores (no opsList algName h &optional depth)
- (list (mapcar #'(lambda (op) (novo-sucessor no op))))
+(defun sucessores (no opsList h &optional depth)
+ (list (mapcar #'(lambda (op) (novo-sucessor no op)) opsList))
 )
 ;;;MIGUEL GABRIEL MARQUES #########################################################
 
