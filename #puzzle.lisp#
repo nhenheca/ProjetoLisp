@@ -5,6 +5,13 @@
 
 ;;;MIGUEL GABRIEL MARQUES ########################################################
 
+(defun n-caixas-fechadas (tabuleiro &optional (x 0)(y 0)(count 0))
+ (cond
+  (())
+  (())
+ )
+)
+
 ;;Devolve o valor da heuristica de acordo com o estado do nó
 (defun heuristica (no)
   0
