@@ -151,5 +151,5 @@
 )
 
 (defun heuristica (no cl objective)
- (- objective (nCaixasFechadas no cl)))
+ (- objective (nCaixasFechadas no cl))
 )
