@@ -37,7 +37,7 @@
 )
 
 (defun novo-sucessor (no op)
- (cria-no (funcall op) (+ 1 (no-profundidade no)) 0 no)
+ (cria-no (funcall (append op 'algo)) (+ 1 (no-profundidade no)) 0 no)
 )
 
 (defun sucessores (no opsList)
@@ -107,7 +107,7 @@
  )
 )
 
-;;;(arco-vertical 1 2 (get-arcos-verticais (no-teste)))
+;;;(arco-vertical 1 2 (get-arcos-horizontais (no-teste)))
 ;;;(((0 0 0) (0 0 1) (0 1 1) (0 0 1))((0 1 0) (0 1 1) (1 0 1) (0 1 1)))
 (defun arco-vertical (pos i l &optional (z 1))
  (cond
@@ -121,7 +121,7 @@
 (defun operadores (cl &optional (pos 1) (i 1))
  (cond
   ((equal pos (+ 1 cl)) nil)
-  ((not (equal cl i)) (append (list(list 'arco-vertical pos i)) (list(list 'arco-horizontal pos i)) (criar-operadores cl pos (+ i 1))) )
+  ((not (equal cl i)) (append (list(list 'arco-vertical pos i '(get-arcos-horizontais ))) (list(list 'arco-horizontal pos i '(get-arcos-horizontais ))) (criar-operadores cl pos (+ i 1))) )
   ((equal cl i) (criar-operadores cl (1+ pos) 1))
  )
 )
