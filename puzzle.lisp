@@ -1,15 +1,3 @@
-;;; OPERADORES ;;;
-;;;Devolve a lista de operadores
-(defun operadores (cl &optional (pos 1) (i 1))
- (cond
-  ((equal pos (+ 1 cl)) nil)
-  ((not (equal cl i)) (append (list(list 'arco-vertical pos i)) (list(list 'arco-horizontal pos i)) (criar-operadores cl pos (+ i 1))) )
-  ((equal cl i) (criar-operadores cl (1+ pos) 1))
- )
-)
-;;;;;;;;;;;;;;;;;;
-
-
 ;;;MIGUEL GABRIEL MARQUES ########################################################
 
 (defun n-caixas-fechadas (tabuleiro &optional (x 0)(y 0)(count 0))
@@ -135,5 +123,14 @@
   ((equal nil (get-arco-na-posicao pos i (get-arcos-verticais (no-teste)))) nil)
   ((= 1 (get-arco-na-posicao pos i (get-arcos-verticais (no-teste)))) nil)
   (t (list l (arco-na-posicao pos i (get-arcos-verticais (no-teste)) z)))
+ )
+)
+
+;;;Devolve a lista de operadores
+(defun operadores (cl &optional (pos 1) (i 1))
+ (cond
+  ((equal pos (+ 1 cl)) nil)
+  ((not (equal cl i)) (append (list(list 'arco-vertical pos i)) (list(list 'arco-horizontal pos i)) (criar-operadores cl pos (+ i 1))) )
+  ((equal cl i) (criar-operadores cl (1+ pos) 1))
  )
 )
