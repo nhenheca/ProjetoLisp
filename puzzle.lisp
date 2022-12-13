@@ -37,11 +37,14 @@
 )
 
 (defun novo-sucessor (pai op)
- (cria-no (funcall (first op) (second op) (third op) (funcall (car (fourth op)) pai)) 0 (+ 1 (no-profundidade pai)) pai)
+ (cond
+  ((null (funcall (first op) (second op) (third op) (funcall (car (fourth op)) pai))) nil)
+  (t (cria-no (funcall (first op) (second op) (third op) (funcall (car (fourth op)) pai)) 0 (+ 1 (no-profundidade pai)) pai))
+ )
 )
 
 (defun sucessores (no opsList)
- (list (mapcar #'(lambda (op) (novo-sucessor no op)) opsList))
+ (remove nil (mapcar #'(lambda (op) (novo-sucessor no op)) opsList))
 )
 ;;;MIGUEL GABRIEL MARQUES #########################################################
 

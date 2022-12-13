@@ -36,12 +36,15 @@
  (list tabuleiro g h pai)
 )
 
-(defun novo-sucessor (no op)
- (cria-no (funcall (first op) (second op) (third op) (funcall (fourth op) no)) (+ 1 (no-profundidade no)) 0 no)
+(defun novo-sucessor (pai op)
+ (cond
+  ((null (funcall (first op) (second op) (third op) (funcall (car (fourth op)) pai))) nil)
+  (t (list (cria-no (funcall (first op) (second op) (third op) (funcall (car (fourth op)) pai)) 0 (+ 1 (no-profundidade pai)) pai)))
+ )
 )
 
 (defun sucessores (no opsList)
- (list (mapcar #'(lambda (op) (novo-sucessor no op)) opsList))
+ (mapcar #'(lambda (op) (novo-sucessor no op)) opsList)
 )
 ;;;MIGUEL GABRIEL MARQUES #########################################################
 
