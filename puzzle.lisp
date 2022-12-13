@@ -1,17 +1,11 @@
-;;;TESTING
-(defun funcall-test-soma (x y z)
- (+ x y z)
-)
 ;;; OPERADORES ;;;
 ;;;Devolve a lista de operadores
-(defun criar-operadores (c l)
+(defun operadores (cl &optional (pos 1) (i 1))
  (cond
-
+  ((equal pos (+ 1 cl)) nil)
+  ((not (equal cl i)) (append (list(list 'arco-vertical pos i)) (list(list 'arco-horizontal pos i)) (criar-operadores cl pos (+ i 1))) )
+  ((equal cl i) (criar-operadores cl (1+ pos) 1))
  )
-)
-
-(defun operadores()
- (list 'arco-horizontal 'arco-vertical)
 )
 ;;;;;;;;;;;;;;;;;;
 
