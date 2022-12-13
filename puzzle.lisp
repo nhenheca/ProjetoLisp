@@ -2,6 +2,19 @@
 (defun funcall-test-soma (x y z)
  (+ x y z)
 )
+;;; OPERADORES ;;;
+;;;Devolve a lista de operadores
+(defun criar-operadores (c l)
+ (cond
+
+ )
+)
+
+(defun operadores()
+ (list 'arco-horizontal 'arco-vertical)
+)
+;;;;;;;;;;;;;;;;;;
+
 
 ;;;MIGUEL GABRIEL MARQUES ########################################################
 
@@ -27,10 +40,7 @@
  (car no)
 )
 
-;;;Devolve a lista de operadores
-(defun operadores()
- (list 'arco-horizontal 'arco-vertical)
-)
+
 
 (defun no-profundidade (no-teste)
  (second no-teste)
