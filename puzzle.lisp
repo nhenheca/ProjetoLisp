@@ -1,5 +1,10 @@
 ;;;MIGUEL GABRIEL MARQUES ########################################################
 
+(defun mostrar-solucao (lst &optional (count 1))
+  (cond ((null lst) nil)
+        (t (progn (format t "~A: ~A ~%" count (car lst)) (mostrar-solucao (cdr lst) (1+ count)))))
+)
+
 ;;;Retorna um tabuleiro 3x3 (3 arcos na vertical por 3 arcos na horizontal) Profundidade Heuristica Pai"
 (defun no-teste ()
  (list (tabuleiro-teste) 0 (heuristica (list (tabuleiro-teste) 0 0 nil) 4 5) nil)
@@ -34,7 +39,7 @@
 (defun novo-sucessor (pai op)
  (cond
   ((null (funcall (first op) (second op) (third op) (funcall (car (fourth op)) pai))) nil)
-  (t (cria-no (funcall (first op) (second op) (third op) (funcall (car (fourth op)) pai)) 0 (+ 1 (no-profundidade pai)) pai))
+  (t (cria-no (funcall (first op) (second op) (third op) (funcall (car (fourth op)) pai)) (heuristica (list (funcall (first op) (second op) (third op) (funcall (car (fourth op)) pai))) 4 5) (+ 1 (no-profundidade pai)) pai))
  )
 )
 

@@ -1,13 +1,15 @@
 ;;;MIGUEL GABRIEL MARQUES ########################################################
 
-;;Devolve o valor da heuristica de acordo com o estado do nó
-(defun heuristica (no)
-  0
+(defun mostrar-sucessores (list)
+ (cond
+  ((null list) nil)
+  (t (progn (format t "- ~a" (car list)) (mostrar-sucessores (cdr list))))
+ )
 )
 
 ;;;Retorna um tabuleiro 3x3 (3 arcos na vertical por 3 arcos na horizontal) Profundidade Heuristica Pai"
 (defun no-teste ()
- (list (tabuleiro-teste) 0 (heuristica (tabuleiro-teste)) nil)
+ (list (tabuleiro-teste) 0 (heuristica (list (tabuleiro-teste) 0 0 nil) 4 5) nil)
 )
 
 ;;;Seleciona dentro do no o tabuleiro
@@ -39,7 +41,7 @@
 (defun novo-sucessor (pai op)
  (cond
   ((null (funcall (first op) (second op) (third op) (funcall (car (fourth op)) pai))) nil)
-  (t (cria-no (funcall (first op) (second op) (third op) (funcall (car (fourth op)) pai)) 0 (+ 1 (no-profundidade pai)) pai))
+  (t (cria-no (funcall (first op) (second op) (third op) (funcall (car (fourth op)) pai)) (heuristica (list (funcall (first op) (second op) (third op) (funcall (car (fourth op)) pai))) 4 5) (+ 1 (no-profundidade pai)) pai))
  )
 )
 
@@ -50,12 +52,19 @@
 
 ;;; Tabuleiro
  "Retorna um tabuleiro 3x3 (3 arcos na vertical por 3 arcos na horizontal)"
-(defun tabuleiro-teste ()
+(defun tabuleiro-testeOG ()
     '(
         ((0 0 0) (0 0 1) (0 1 1) (0 0 1))
         ((0 0 0) (0 1 1) (1 0 1) (0 1 1))
     )
 )
+(defun tabuleiro-teste ()
+    '(
+        ((0 0 0) (0 0 1) (0 1 1) (0 0 1))
+        ((0 0 0) (0 1 0) (0 0 1) (0 1 1))
+    )
+)
+
 
 ;;; SELETORES ;;;
 ;;;(get-arcos-horizontais (no-teste))
@@ -130,7 +139,7 @@
 )
 
 ;;(get-arco-na-posicao 2 3 (get-arcos-horizontais (no-teste)))
-(defun nCaixasFechadas (no cl &optional (iL 1)(posL 1)(iC 1)(posC 1)(caixas 0)(itNumber 0))
+(defun nCaixasFechadas (no cl &optional (iL 1)(posL 1)(iC 1)(posC 1)(caixas 0)(itNumber 1))
  (cond
   ((equal itNumber cl) caixas)
   ((equal cl posC) (nCaixasFechadas no cl 1 (+ posL 1) (+ iC 1) 1 caixas (+ itNumber 1)))
@@ -139,11 +148,15 @@
  )
 )
 
-(defun nCaixasAbertas (no cl &optional (iL 1)(posL 1)(iC 1)(posC 1)(caixas 0)(itNumber 0))
+(defun nCaixasAbertas (no cl &optional (iL 1)(posL 1)(iC 1)(posC 1)(caixas 0)(itNumber 1))
  (cond
   ((equal itNumber cl) caixas)
   ((equal cl posC) (nCaixasAbertas no cl 1 (+ posL 1) (+ iC 1) 1 caixas (+ itNumber 1)))
   ((equal 3 (+ (get-arco-na-posicao posL iL (get-arcos-horizontais no))(get-arco-na-posicao (+ 1 posL) iL (get-arcos-horizontais no))(get-arco-na-posicao posC iC (get-arcos-verticais no))(get-arco-na-posicao (+ 1 posC) iC (get-arcos-verticais no)))) (nCaixasAbertas no cl (+ iL 1) posL iC (+ posC 1)(+ caixas 1) itNumber))
-  ((not (equal 3 (+ (get-arco-na-posicao posL iL (get-arcos-horizontais no))(get-arco-na-posicao (+ 1 posL) iL (get-arcos-horizontais no))(get-arco-na-posicao posC iC (get-arcos-verticais no))(get-arco-na-posicao (+ 1 posC) iC (get-arcos-verticais no))))) (nCaixasAbertas no cl (+ iL 1) posL iC (+ posC 1)(+ caixas 1) itNumber))
+  ((not (equal 3 (+ (get-arco-na-posicao posL iL (get-arcos-horizontais no))(get-arco-na-posicao (+ 1 posL) iL (get-arcos-horizontais no))(get-arco-na-posicao posC iC (get-arcos-verticais no))(get-arco-na-posicao (+ 1 posC) iC (get-arcos-verticais no))))) (nCaixasAbertas no cl (+ iL 1) posL iC (+ posC 1) caixas itNumber))
  )
+)
+
+(defun heuristica (no cl objective)
+ (- objective (nCaixasFechadas no cl))
 )
