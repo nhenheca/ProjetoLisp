@@ -32,14 +32,14 @@
 )
 
 ;;;Construtor
-(defun cria-no (tabuleiro h &optional (g 0)(pai nil))
+(defun cria-no (tabuleiro g h pai)
  (list tabuleiro g h pai)
 )
 
 (defun novo-sucessor (pai op)
  (cond
   ((null (funcall (first op) (second op) (third op) (funcall (car (fourth op)) pai))) nil)
-  (t (cria-no (funcall (first op) (second op) (third op) (funcall (car (fourth op)) pai)) (heuristica (list (funcall (first op) (second op) (third op) (funcall (car (fourth op)) pai))) 4 5) (+ 1 (no-profundidade pai)) pai))
+  (t (cria-no (funcall (first op) (second op) (third op) (funcall (car (fourth op)) pai)) (+ 1 (no-profundidade pai)) (heuristica (list (funcall (first op) (second op) (third op) (funcall (car (fourth op)) pai))) 4 5)  pai))
  )
 )
 
@@ -157,4 +157,22 @@
 
 (defun heuristica (no cl objective)
  (- objective (nCaixasFechadas no cl))
+)
+
+;;; Algoritmos
+;; procura na largura
++
+(defun bfs (no sucessores operadores &optional abertos fechados)
+  (cond ((eq (no-existep no fechados) nil) (bfs no 'sucessores operadores (funcall sucessores no operadores) (cons no fechados))) ;; primeira vez que correr o código, gerar sucessores e acrescentar no inicial nos fechados
+        ((null abertos) nil)  ;;se abertos tiver vazio, retorna nil
+        ((eq (no-heuristica (car abertos)) 0) (car abertos))  ;; se o primeiro valor de abertos == solução, então retorna primeiro valor de abertos
+        ((eq (no-existep (car abertos) fechados) nil) (bfs no 'sucessores operadores (append (cdr abertos) (funcall sucessores (car abertos) operadores)) (cons (car abertos) fechados))) ;;se primeiro de abertos nao tiver nos fechados, remover de abertos, gerar sucessores e acrescentar nos fechados
+        (t (bfs no 'sucessores operadores (cdr abertos) fechados))) ;; se ja existir nos fechados, apenas tirar no dos abertos e nao acrescentar
+)
+
+;; no-existep
+(defun no-existep(no lst) ;; perguntar ao professor porque position, find & member doesn't work with searching lists
+  (cond ((null lst) nil)
+        ((equal (no-estado no) (no-estado (car lst))) t)
+        (t (no-existep no (cdr lst))))
 )
