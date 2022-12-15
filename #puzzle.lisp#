@@ -189,7 +189,7 @@
   ((eq it 3) (dfs operadores depth (cdr abertos) (cons (car abertos) fechados) (car abertos) 4 (+ bool 1)))
   ((and (eq it 4)(> (no-profundidade (car fechados)) depth)) (dfs operadores depth abertos fechados pop-no 3 1))
   ((and (eq it 4)(<= (no-profundidade (car fechados)) depth)) (dfs operadores depth abertos fechados pop-no 5 1))
-  ((eq it 5) (dfs operadores depth (append abertos (sucessores (car fechados) operadores)) fechados pop-no 6 1))
+  ((eq it 5) (dfs operadores depth (append (sucessores (car fechados) operadores) abertos) fechados pop-no 6 1))
   ((and (eq it 6) (not (eq nil (sucessor-e-objetivo-a* (sucessores pop-no operadores))))) (list (sucessor-e-objetivo-a* (sucessores pop-no operadores))(+(length abertos)(length fechados)) (length fechados)))
   (t (dfs operadores depth abertos fechados pop-no 3 1))
  )

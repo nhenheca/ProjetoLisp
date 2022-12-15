@@ -62,7 +62,7 @@
         ((0 0 0) (0 1 0) (0 0 1) (0 1 1))
     )
 )
-(defun tabuleiro-teste1 ()
+(defun tabuleiro-teste2 ()
     '(
         ((0 0 1 0) (1 1 1 1) (0 0 1 1) (0 0 1 1) (0 0 1 1))
         ((0 0 1 1) (0 0 1 1) (1 1 1 1) (1 0 1 1) (0 1 1 1))
@@ -173,35 +173,38 @@
 
 ;;; Algoritmos
 ;; procura na largura
-(defun bfs (operadores &optional (abertos (cons (no-teste) nil)) fechados pop-no (it 3))
+(defun bfs (operadores &optional (abertos (cons (no-teste) nil)) fechados (it 3))
  (cond
-  ((eq it 3) (bfs operadores (cdr abertos) (cons (car abertos) fechados) (car abertos) (+ it 1)))
-  ((eq it 4) (bfs operadores (append abertos (sucessores (car fechados) operadores)) fechados pop-no (+ it 1)))
-  ((and (eq it 5) (not (eq nil (sucessor-e-objetivo-a* (sucessores pop-no operadores))))) (list (sucessor-e-objetivo-a* (sucessores pop-no operadores))(+(length abertos)(length fechados)) (length fechados)))
+  ((eq it 3) (bfs operadores (cdr abertos) (cons (car abertos) fechados) (+ it 1)))
+  ((eq it 4) (bfs operadores (append abertos (sucessores (car fechados) operadores)) fechados (+ it 1)))
+  ((and (eq it 5) (equal (no-heuristica (car abertos)) 0)) (car abertos))
   ((null abertos) nil)
   (t (bfs operadores abertos fechados 3))
  )
 )
 
-(defun dfs (operadores depth &optional (abertos (cons (no-teste) nil)) fechados pop-no (it 3)(bool 0))
+(defun dfs (operadores depth &optional (abertos (cons (no-teste) nil)) fechados (it 3)(bool 0))
  (cond
   ((and (not(eq bool 1))(null abertos)) nil)
-  ((eq it 3) (dfs operadores depth (cdr abertos) (cons (car abertos) fechados) (car abertos) 4 (+ bool 1)))
-  ((and (eq it 4)(> (no-profundidade (car fechados)) depth)) (dfs operadores depth abertos fechados pop-no 3 1))
-  ((and (eq it 4)(<= (no-profundidade (car fechados)) depth)) (dfs operadores depth abertos fechados pop-no 5 1))
-  ((eq it 5) (dfs operadores depth (append abertos (sucessores (car fechados) operadores)) fechados pop-no 6 1))
-  ((and (eq it 6) (not (eq nil (sucessor-e-objetivo-a* (sucessores pop-no operadores))))) (list (sucessor-e-objetivo-a* (sucessores pop-no operadores))(+(length abertos)(length fechados)) (length fechados)))
-  (t (dfs operadores depth abertos fechados pop-no 3 1))
+  ((eq it 3) (dfs operadores depth (cdr abertos) (cons (car abertos) fechados) (+ it 1)(+ bool 1)))
+  ((and (eq it 4)(> (no-profundidade (car fechados)) depth)) (dfs operadores depth abertos fechados 3 1))
+  ((and (eq it 4)(<= (no-profundidade (car fechados)) depth)) (dfs operadores depth abertos fechados 5 1))
+  ((eq it 5) (dfs operadores depth (append (sucessores (car fechados) operadores) abertos) fechados 6 1))
+  ((and (eq it 6) (equal (no-heuristica (car abertos)) 0)) (car abertos))
+  (t (dfs operadores depth abertos fechados 3 1))
  )
 )
 
 ;;; A* ##################################################################
+(defun abertosI ()
+ (list (no-teste))
+)
 
-(defun a* (operadores &optional (abertos (cons (no-teste) nil)) fechados pop-no (it 3)(bool 0))
+(defun a* (operadores abertos &optional (fechados '()) pop-no (it 3)(bool 0))
  (cond
   ((and (not(eq bool 1))(null abertos)) nil)
   ((eq it 3) (a* operadores (abertos-sem-no-menor-custo-a* abertos (pos-no-menor-custo-a* abertos)) fechados (no-menor-custo-a* abertos) 0 (+ bool 1)))
-  ((not (eq nil (sucessor-e-objetivo-a* (sucessores pop-no operadores)))) (list (sucessor-e-objetivo-a* (sucessores pop-no operadores))(+(length abertos)(length fechados)) (length fechados)))
+  ((not (eq nil (sucessor-e-objetivo-a* (sucessores pop-no operadores)))) (sucessor-e-objetivo-a* (sucessores pop-no operadores)))
   (t (a* operadores (compile-sucessores-fechados (compile-sucessores-abertos (sucessores pop-no operadores) abertos) fechados) (append pop-no fechados) pop-no 3 1))
   
  )
