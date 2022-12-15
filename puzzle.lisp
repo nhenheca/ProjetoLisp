@@ -173,7 +173,7 @@
 
 ;;; Algoritmos
 ;; procura na largura
-(defun bfs (operadores &optional (abertos (cons (no-teste) nil)) fechados pop-no (it 3))
+(defun bfs (operadores &optional (abertos (list (no-teste))) fechados pop-no (it 3))
  (cond
   ((eq it 3) (bfs operadores (cdr abertos) (cons (car abertos) fechados) (car abertos) (+ it 1)))
   ((eq it 4) (bfs operadores (append abertos (sucessores (car fechados) operadores)) fechados pop-no (+ it 1)))
@@ -183,13 +183,13 @@
  )
 )
 
-(defun dfs (operadores depth &optional (abertos (cons (no-teste) nil)) fechados pop-no (it 3)(bool 0))
+(defun dfs (operadores depth &optional (abertos (list (no-teste))) fechados pop-no (it 3)(bool 0))
  (cond
   ((and (not(eq bool 1))(null abertos)) nil)
   ((eq it 3) (dfs operadores depth (cdr abertos) (cons (car abertos) fechados) (car abertos) 4 (+ bool 1)))
   ((and (eq it 4)(> (no-profundidade (car fechados)) depth)) (dfs operadores depth abertos fechados pop-no 3 1))
   ((and (eq it 4)(<= (no-profundidade (car fechados)) depth)) (dfs operadores depth abertos fechados pop-no 5 1))
-  ((eq it 5) (dfs operadores depth (append abertos (sucessores (car fechados) operadores)) fechados pop-no 6 1))
+  ((eq it 5) (dfs operadores depth (append (sucessores (car fechados) operadores) abertos) fechados pop-no 6 1))
   ((and (eq it 6) (not (eq nil (sucessor-e-objetivo-a* (sucessores pop-no operadores))))) (list (sucessor-e-objetivo-a* (sucessores pop-no operadores))(+(length abertos)(length fechados)) (length fechados)))
   (t (dfs operadores depth abertos fechados pop-no 3 1))
  )
@@ -197,7 +197,7 @@
 
 ;;; A* ##################################################################
 
-(defun a* (operadores &optional (abertos (cons (no-teste) nil)) fechados pop-no (it 3)(bool 0))
+(defun a* (operadores &optional (abertos (list (no-teste))) fechados pop-no (it 3)(bool 0))
  (cond
   ((and (not(eq bool 1))(null abertos)) nil)
   ((eq it 3) (a* operadores (abertos-sem-no-menor-custo-a* abertos (pos-no-menor-custo-a* abertos)) fechados (no-menor-custo-a* abertos) 0 (+ bool 1)))
