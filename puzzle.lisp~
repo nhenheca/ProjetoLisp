@@ -7,7 +7,7 @@
 
 ;;;Retorna um tabuleiro 3x3 (3 arcos na vertical por 3 arcos na horizontal) Profundidade Heuristica Pai"
 (defun no-teste ()
- (list (tabuleiro-teste) 0 (heuristica (list (tabuleiro-teste) 0 0 nil) 4 3) nil)
+ (list (tabuleiro-teste) 0 (heuristica (list (tabuleiro-teste) 0 0 nil) 4 9) nil)
 )
 
 ;;;Seleciona dentro do no o tabuleiro
@@ -39,7 +39,7 @@
 (defun novo-sucessor (pai op)
  (cond
   ((null (funcall (first op) (second op) (third op) (funcall (car (fourth op)) pai))) nil)
-  (t (cria-no (funcall (first op) (second op) (third op) (funcall (car (fourth op)) pai)) (+ 1 (no-profundidade pai)) (heuristica (list (funcall (first op) (second op) (third op) (funcall (car (fourth op)) pai))) 4 3)  pai))
+  (t (cria-no (funcall (first op) (second op) (third op) (funcall (car (fourth op)) pai)) (+ 1 (no-profundidade pai)) (heuristica (list (funcall (first op) (second op) (third op) (funcall (car (fourth op)) pai))) 4 9)  pai))
  )
 )
 
@@ -58,8 +58,8 @@
 )
 (defun tabuleiro-teste ()
     '(
-        ((0 0 0) (0 0 1) (0 1 1) (0 0 1))
-        ((0 0 0) (0 1 0) (0 0 1) (0 1 1))
+        ((0 1 1) (1 1 1) (1 1 1) (1 1 1))
+        ((1 1 1) (1 1 1) (1 1 1) (1 1 1))
     )
 )
 
@@ -161,13 +161,12 @@
 
 ;;; Algoritmos
 ;; procura na largura
-;; TODO ver se ja está fechados
-(defun bfs (operadores cl objective &optional (abertos (cons (no-teste) nil)) fechados (it 3))
+(defun bfs (operadores cl objective &optional (abertos (list (no-teste))) (fechados) (it 3))
  (cond
-  ((eq it 3) (bfs operadores cl objective (cdr abertos) (cons (car abertos) fechados) (+ it 1)))
-  ((eq it 4) (bfs operadores cl objective (append abertos (sucessores (car fechados) operadores)) fechados (+ it 1)))
-  ((and (eq it 5) (equal (no-heuristica (car abertos)) 0)) (car abertos))
   ((null abertos) nil)
+  ((equal it 3) (bfs operadores cl objective (cdr abertos) (cons (car abertos) fechados) (+ it 1)))
+  ((equal it 4) (bfs operadores cl objective (append abertos (sucessores (car fechados) operadores)) fechados (+ it 1)))
+  ((and (equal it 5) (equal (no-heuristica (car abertos)) 0)) (car abertos))
   (t (bfs operadores cl objective abertos fechados 3))
  )
 )
