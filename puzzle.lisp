@@ -7,7 +7,7 @@
 
 ;;;Retorna um tabuleiro 3x3 (3 arcos na vertical por 3 arcos na horizontal) Profundidade Heuristica Pai"
 (defun no-teste ()
- (list (tabuleiro-teste) 0 (heuristica (list (tabuleiro-teste) 0 0 nil) 4 3) nil)
+ (list (tabuleiro-teste) 0 (heuristica (list (tabuleiro-teste) 0 0 nil) (get-cl) (get-objective)) nil)
 )
 
 ;;;Seleciona dentro do no o tabuleiro
@@ -39,7 +39,7 @@
 (defun novo-sucessor (pai op)
  (cond
   ((null (funcall (first op) (second op) (third op) (funcall (car (fourth op)) pai))) nil)
-  (t (cria-no (funcall (first op) (second op) (third op) (funcall (car (fourth op)) pai)) (+ 1 (no-profundidade pai)) (heuristica (list (funcall (first op) (second op) (third op) (funcall (car (fourth op)) pai))) 4 3)  pai))
+  (t (cria-no (funcall (first op) (second op) (third op) (funcall (car (fourth op)) pai)) (+ 1 (no-profundidade pai)) (heuristica (list (funcall (first op) (second op) (third op) (funcall (car (fourth op)) pai))) (get-cl) (get-objective))  pai))
  )
 )
 
@@ -56,13 +56,18 @@
         ((0 0 0) (0 1 1) (1 0 1) (0 1 1))
     )
 )
-(defun tabuleiro-teste ()
+(defun tabuleiro-teste2 ()
     '(
         ((0 0 0) (0 0 1) (0 1 1) (0 0 1))
         ((0 0 0) (0 1 0) (0 0 1) (0 1 1))
     )
 )
-
+(defun tabuleiro-teste ()
+    '(
+        ((0 0 1 0) (1 1 1 1) (0 0 1 1) (0 0 1 1) (0 0 1 1))
+        ((0 0 1 1) (0 0 1 1) (1 1 1 1) (1 0 1 1) (0 1 1 1))
+    )
+)
 
 ;;; SELETORES ;;;
 ;;;(get-arcos-horizontais (no-teste))
@@ -128,7 +133,7 @@
 )
 
 ;;;Devolve a lista de operadores
-(defun operadores (cl &optional (pos 1) (i 1))
+(defun operadores (&optional (cl (length (car (no-estado (no-teste))))) (pos 1) (i 1))
  (cond
   ((equal pos (+ 1 cl)) nil)
   ((not (equal cl i)) (append (list(list 'arco-vertical pos i '(get-arcos-horizontais ))) (list(list 'arco-horizontal pos i '(get-arcos-verticais ))) (operadores cl pos (+ i 1))) )
@@ -159,6 +164,13 @@
  (- objective (nCaixasFechadas no cl))
 )
 
+(defun get-cl ()
+ 5
+)
+(defun get-objective ()
+ 7
+)
+
 ;;; Algoritmos
 ;; procura na largura
 (defun bfs (operadores &optional (abertos (cons (no-teste) nil)) fechados (it 3))
@@ -171,14 +183,24 @@
  )
 )
 
-(defun dfs (operadores depth &optional (abertos (cons (no-teste) nil)) fechados (it 3)(bool 1))
+(defun dfs (operadores depth &optional (abertos (cons (no-teste) nil)) fechados (it 3)(bool 0))
  (cond
-  ((null abertos) nil)
-  ((eq it 3) (dfs operadores depth (cdr abertos) (cons (car abertos) fechados) (+ it 1)))
-  ((and (eq it 4)(> (no-profundidade (car fechados)) depth)) (dfs operadores depth abertos fechados 3))
-  ((and (eq it 4)(<= (no-profundidade (car fechados)) depth)) (dfs operadores depth abertos fechados 5))
-  ((eq it 5) (dfs operadores depth (append abertos (sucessores (car fechados) operadores)) fechados 6))
+  ((and (not(eq bool 1))(null abertos)) nil)
+  ((eq it 3) (dfs operadores depth (cdr abertos) (cons (car abertos) fechados) (+ it 1)(+ bool 1)))
+  ((and (eq it 4)(> (no-profundidade (car fechados)) depth)) (dfs operadores depth abertos fechados 3 1))
+  ((and (eq it 4)(<= (no-profundidade (car fechados)) depth)) (dfs operadores depth abertos fechados 5 1))
+  ((eq it 5) (dfs operadores depth (append abertos (sucessores (car fechados) operadores)) fechados 6 1))
   ((and (eq it 6) (equal (no-heuristica (car abertos)) 0)) (car abertos))
-  (t (dfs operadores depth abertos fechados 3))
+  (t (dfs operadores depth abertos fechados 3 1))
+ )
+)
+
+(defun a* (operadores &optional (abertos (cons (no-teste) nil)) fechados (it 3))
+ (cond
+  ((eq it 3) (bfs operadores (cdr abertos) (cons (car abertos) fechados) (+ it 1)))
+  ((eq it 4) (bfs operadores (append abertos (sucessores (car fechados) operadores)) fechados (+ it 1)))
+  ((and (eq it 5) (equal (no-heuristica (car abertos)) 0)) (car abertos))
+  ((null abertos) nil)
+  (t (bfs operadores abertos fechados 3))
  )
 )
