@@ -171,10 +171,10 @@
  )
 )
 
-(defun dfs (operadores depth &optional (abertos (cons (no-teste) nil)) fechados (it 3)(bool 1))
+(defun dfs (operadores depth &optional (abertos (cons (no-teste) nil)) fechados (it 3)(bool 0))
  (cond
-  ((null abertos) nil)
-  ((eq it 3) (dfs operadores depth (cdr abertos) (cons (car abertos) fechados) (+ it 1)))
+  ((and (/= bool 1)(null abertos)) nil)
+  ((eq it 3) (dfs operadores depth (cdr abertos) (cons (car abertos) fechados) (+ it 1)(+ bool 1)))
   ((and (eq it 4)(> (no-profundidade (car fechados)) depth)) (dfs operadores depth abertos fechados 3))
   ((and (eq it 4)(<= (no-profundidade (car fechados)) depth)) (dfs operadores depth abertos fechados 5))
   ((eq it 5) (dfs operadores depth (append abertos (sucessores (car fechados) operadores)) fechados 6))
