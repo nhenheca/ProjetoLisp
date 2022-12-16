@@ -199,10 +199,11 @@
 
 (defun a* (operadores &optional (abertos (list (no-teste))) fechados pop-no (it 3)(bool 0))
  (cond
-  ((and (not(eq bool 1))(null abertos)) nil)
+  ;((and (not(eq bool 1))(null abertos)) nil)
   ((eq it 3) (a* operadores (abertos-sem-no-menor-custo-a* abertos (pos-no-menor-custo-a* abertos)) fechados (no-menor-custo-a* abertos) 0 (+ bool 1)))
-  ((not (eq nil (sucessor-e-objetivo-a* (sucessores pop-no operadores))))    (list (sucessor-e-objetivo-a* (sucessores pop-no operadores))(+(length abertos)(length fechados)) (+ 1 (length fechados))))
-  (t (a* operadores (compile-sucessores-fechados (compile-sucessores-abertos (sucessores pop-no operadores) abertos) fechados) (append (list pop-no) fechados) pop-no 3 1)) 
+  ((not (eq nil (sucessor-e-objetivo-a* (sucessores pop-no operadores)))) (list (sucessor-e-objetivo-a* (sucessores pop-no operadores))(+(length abertos)(length fechados)) (length fechados)))
+  (t (a* operadores (compile-sucessores-fechados (compile-sucessores-abertos (sucessores pop-no operadores) abertos) fechados) (append (list pop-no fechados) pop-no 3 1))
+  
  )
 )
 
@@ -260,3 +261,17 @@
 (defun compile-sucessores-fechados (sucessoresL fechados)
  (mapcar #'(lambda (x) (no-existe-fechados x fechados)) sucessoresL)
 )
+
+;;; Implementação do A*.
+;;; (a* [operadores: Conjunto de Operadores] [abertos: Lista de abertos inicializada com o no incial] [fechados: Lista de fechados vazia] [pop-no: Atomo que guarda o no retirado da lista de abertos] [it: Atmo de controlo dentro da função recursiva] [bool: Atmo que impede que a função recursiva de devolver nil na primeira iteração]
+
+;;; Devolve a posição na lista de abertos do no de menor custo.
+;;; (pos-no-menor-custo-a* [abertos: Lista de abertos] [no: Primeiro no da Lista de abertos] [i: Atmo auxiliar] [pos: Atmo devolve a posição do no] )
+
+;;; Devolve o no da lista de abertos de menor custo.
+;;; (pos-no-menor-custo-a* [abertos: Lista de abertos] [no: Primeiro no da Lista de abertos] [i: Atmo auxiliar] [pos: Atmo devolve a posição do no] )
+
+;;; Devolve a lista de abertos sem o no de menor custo
+;;; (pos-no-menor-custo-a* [abertos: Lista de abertos] [pos: Posição do no na lista])
+
+;;; Verifica se no é objetivo
