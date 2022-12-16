@@ -164,6 +164,14 @@
  (- objective (nCaixasFechadas no cl))
 )
 
+(defun no-objetivop (no)
+ (cond
+  ((eq 0 (no-heuristica no)) T)
+  (t nil)
+ )
+ 
+)
+
 (defun get-cl ()
  4
 )
@@ -195,18 +203,23 @@
  )
 )
 
-;;; A* ##################################################################
+;;; ####################################################################################################################################################################################################################################
+;;; A* #################################################################################################################################################################################################################################
+;;; ####################################################################################################################################################################################################################################
 
+;;; Implementação do A*.
+;;; (a* [operadores: Conjunto de Operadores] [abertos: Lista de abertos inicializada com o no incial] [fechados: Lista de fechados vazia] [pop-no: Atomo que guarda o no retirado da lista de abertos] [it: Atmo de controlo dentro da função recursiva] [bool: Atmo que impede que a função recursiva de devolver nil na primeira iteração]
 (defun a* (operadores &optional (abertos (list (no-teste))) fechados pop-no (it 3)(bool 0))
  (cond
-  ;((and (not(eq bool 1))(null abertos)) nil)
-  ((eq it 3) (a* operadores (abertos-sem-no-menor-custo-a* abertos (pos-no-menor-custo-a* abertos)) fechados (no-menor-custo-a* abertos) 0 (+ bool 1)))
-  ((not (eq nil (sucessor-e-objetivo-a* (sucessores pop-no operadores)))) (list (sucessor-e-objetivo-a* (sucessores pop-no operadores))(+(length abertos)(length fechados)) (length fechados)))
-  (t (a* operadores (compile-sucessores-fechados (compile-sucessores-abertos (sucessores pop-no operadores) abertos) fechados) (append (list pop-no fechados) pop-no 3 1))
-  
+  ((and (not(eq bool 1))(null abertos)) nil) ;;; SE A LISTA DE ABERTOS FOR NULL ENTÃO NÃO EXSITE NO OBJETIVO
+  ((eq it 3) (a* operadores (abertos-sem-no-menor-custo-a* abertos (pos-no-menor-custo-a* abertos)) fechados (no-menor-custo-a* abertos) 0 (+ bool 1))) ;;; RETIRA O NO DE MENOR CUSTO DE ABERTOS, GUARDA REFERENCIA NO "NO-POP"
+  ((not (eq nil (sucessor-e-objetivo-a* (sucessores pop-no operadores)))) (list (sucessor-e-objetivo-a* (sucessores pop-no operadores))(+(length abertos)(length fechados)) (+ 1 (length fechados)))) ;;; SE ALGUM NO SUCESSOR FOR NO OBJETIVO DEVOLVE
+  (t (a* operadores (compile-sucessores-fechados (compile-sucessores-abertos (sucessores pop-no operadores) abertos) fechados) (append (list pop-no) fechados) pop-no 3 1)) ;;; SENAO ABERTOS RECEBE NOS SUCESSORES, FECHADOS RECEBE O "NO-POP"
  )
 )
 
+;;; Devolve a posição na lista de abertos do no de menor custo.
+;;; (pos-no-menor-custo-a* [abertos: Lista de abertos] [no: Primeiro no da Lista de abertos] [i: Atmo auxiliar] [pos: Atmo devolve a posição do no] )
 (defun pos-no-menor-custo-a* (abertos &optional (no (car abertos)) (i 0)(pos 0))
  (cond
   ((null abertos) pos)
@@ -215,6 +228,8 @@
  )
 )
 
+;;; Devolve o no da lista de abertos de menor custo.
+;;; (no-menor-custo-a* [abertos: Lista de abertos] [no: Primeiro no da Lista de abertos] [i: Atmo auxiliar] [pos: Atmo devolve a posição do no] )
 (defun no-menor-custo-a* (abertos &optional (no (car abertos)) (i 0)(pos 0))
  (cond
   ((null abertos) no)
@@ -223,6 +238,8 @@
  )
 )
 
+;;; Devolve a lista de abertos sem o no de menor custo
+;;; (pos-no-menor-custo-a* [abertos: Lista de abertos] [pos: Posição do no na lista])
 (defun abertos-sem-no-menor-custo-a* (abertos pos)
  (cond
   ((eq 1(length abertos)) (cdr abertos))
@@ -230,14 +247,18 @@
  )
 )
 
+;;; Verifica se no é objetivo
+;;; (sucessor-e-objetivo-a* [sucessoresL: Lista de sucessores])
 (defun sucessor-e-objetivo-a* (sucessoresL)
  (cond
   ((null sucessoresL) nil)
-  ((eq (no-heuristica (car sucessoresL)) 0) (car sucessoresL))
+  ((no-objetivop (car sucessoresL)) (car sucessoresL))
   (t (sucessor-e-objetivo-a* (cdr sucessoresL)))
  )
 )
 
+;;; Verifica se o no já existe em abertos com maior custo
+;;; (no-existe-abertos [no: no a comparar][abertos: lista de abertos])
 (defun no-existe-abertos (no abertos)
  (cond
   ((null abertos) no)
@@ -246,6 +267,8 @@
  )
 )
 
+;;; Verifica se o no já existe em fechados com maior custo
+;;; (no-existe-abertos [no: no a comparar][fechados: lista de fechados)
 (defun no-existe-fechados (no fechados)
  (cond
   ((null fechados) no)
@@ -254,24 +277,23 @@
  )
 )
 
+;;;Compila todos os nos que não existem em abertos com menor custo
+;;; (no-existe-abertos [sucessoresL: lista de sucessoresr][abertos: lista de abertos)
 (defun compile-sucessores-abertos (sucessoresL abertos)
  (mapcar #'(lambda (x) (no-existe-abertos x abertos)) sucessoresL)
 )
 
+;;;Compila todos os nos que não existem em fechados com menor custo
+;;; (no-existe-abertos [sucessoresL: lista de sucessores][fechados: lista de fechados)
 (defun compile-sucessores-fechados (sucessoresL fechados)
  (mapcar #'(lambda (x) (no-existe-fechados x fechados)) sucessoresL)
 )
 
-;;; Implementação do A*.
-;;; (a* [operadores: Conjunto de Operadores] [abertos: Lista de abertos inicializada com o no incial] [fechados: Lista de fechados vazia] [pop-no: Atomo que guarda o no retirado da lista de abertos] [it: Atmo de controlo dentro da função recursiva] [bool: Atmo que impede que a função recursiva de devolver nil na primeira iteração]
 
-;;; Devolve a posição na lista de abertos do no de menor custo.
-;;; (pos-no-menor-custo-a* [abertos: Lista de abertos] [no: Primeiro no da Lista de abertos] [i: Atmo auxiliar] [pos: Atmo devolve a posição do no] )
 
-;;; Devolve o no da lista de abertos de menor custo.
-;;; (pos-no-menor-custo-a* [abertos: Lista de abertos] [no: Primeiro no da Lista de abertos] [i: Atmo auxiliar] [pos: Atmo devolve a posição do no] )
 
-;;; Devolve a lista de abertos sem o no de menor custo
-;;; (pos-no-menor-custo-a* [abertos: Lista de abertos] [pos: Posição do no na lista])
 
-;;; Verifica se no é objetivo
+
+
+
+
