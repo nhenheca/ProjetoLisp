@@ -164,6 +164,14 @@
  (- objective (nCaixasFechadas no cl))
 )
 
+(defun no-objetivop (no)
+ (cond
+  ((eq 0 (no-heuristica no)) T)
+  (t nil)
+ )
+ 
+)
+
 (defun get-cl ()
  4
 )
@@ -171,42 +179,82 @@
  3
 )
 
-;;; Algoritmos
-;; procura na largura
-(defun bfs (operadores &optional (abertos (list (no-teste))) fechados pop-no (it 3))
+;;; ####################################################################################################################################################################################################################################
+;;; BFS ################################################################################################################################################################################################################################
+;;; ####################################################################################################################################################################################################################################
+
+(defun bfs (&optional (operadores (operadores)) (abertos (list (no-teste))) fechados pop-no (it 3))
  (cond
-  ((eq it 3) (bfs operadores (cdr abertos) (cons (car abertos) fechados) (car abertos) (+ it 1)))
-  ((eq it 4) (bfs operadores (append abertos (sucessores (car fechados) operadores)) fechados pop-no (+ it 1)))
-  ((and (eq it 5) (not (eq nil (sucessor-e-objetivo-a* (sucessores pop-no operadores))))) (list (sucessor-e-objetivo-a* (sucessores pop-no operadores))(+(length abertos)(length fechados)) (length fechados)))
+  ((eq it 3) (bfs operadores (cdr abertos) (append (list (car abertos))fechados) (car abertos) 5))
+  ((not (eq nil (sucessor-e-objetivo (sucessores pop-no operadores)))) (list (sucessor-e-objetivo (sucessores pop-no operadores))(+(length abertos)(length fechados))(- (length fechados) 1)))
+  ((eq it 5) (bfs operadores (append abertos (compile-sucessores-fechados (compile-sucessores-abertos (sucessores pop-no operadores) abertos) fechados)) fechados pop-no 0))  
   ((null abertos) nil)
   (t (bfs operadores abertos fechados 3))
  )
 )
 
-(defun dfs (operadores depth &optional (abertos (list (no-teste))) fechados pop-no (it 3)(bool 0))
+(defun no-existe-abertos (no abertos)
  (cond
-  ((and (not(eq bool 1))(null abertos)) nil)
-  ((eq it 3) (dfs operadores depth (cdr abertos) (cons (car abertos) fechados) (car abertos) 4 (+ bool 1)))
-  ((and (eq it 4)(> (no-profundidade (car fechados)) depth)) (dfs operadores depth abertos fechados pop-no 3 1))
-  ((and (eq it 4)(< (no-profundidade (car fechados)) depth)) (dfs operadores depth abertos fechados pop-no 5 1))
-  ((eq it 5) (dfs operadores depth (append (sucessores (car fechados) operadores) abertos) fechados pop-no 6 1))
-  ((and (eq it 6) (not (eq nil (sucessor-e-objetivo-a* (sucessores pop-no operadores))))) (list (sucessor-e-objetivo-a* (sucessores pop-no operadores))(+(length abertos)(length fechados)) (length fechados)))
-  (t (dfs operadores depth abertos fechados pop-no 3 1))
+  ((null abertos) no)
+  ((eq (no-estado no)(no-estado (car abertos))) nil)
+  (t (no-existe-abertos no (cdr abertos)))
  )
 )
 
-;;; A* ##################################################################
-
-(defun a* (operadores &optional (abertos (list (no-teste))) fechados pop-no (it 3)(bool 0))
+;;; Verifica se o no já existe em fechados com maior custo
+;;; (no-existe-abertos [no: no a comparar][fechados: lista de fechados)
+(defun no-existe-fechados (no fechados)
  (cond
-  ;((and (not(eq bool 1))(null abertos)) nil)
-  ((eq it 3) (a* operadores (abertos-sem-no-menor-custo-a* abertos (pos-no-menor-custo-a* abertos)) fechados (no-menor-custo-a* abertos) 0 (+ bool 1)))
-  ((not (eq nil (sucessor-e-objetivo-a* (sucessores pop-no operadores)))) (list (sucessor-e-objetivo-a* (sucessores pop-no operadores))(+(length abertos)(length fechados)) (length fechados)))
-  (t (a* operadores (compile-sucessores-fechados (compile-sucessores-abertos (sucessores pop-no operadores) abertos) fechados) (append pop-no fechados) pop-no 3 1))
-  
+  ((null fechados) no)
+  ((eq (no-estado no)(no-estado (car fechados))) nil)
+  (t (no-existe-fechados no (cdr fechados)))
  )
 )
 
+;;;Compila todos os nos que não existem em abertos com menor custo
+;;; (no-existe-abertos [sucessoresL: lista de sucessoresr][abertos: lista de abertos)
+(defun compile-sucessores-abertos (sucessoresL abertos)
+ (mapcar #'(lambda (x) (no-existe-abertos x abertos)) sucessoresL)
+)
+
+;;;Compila todos os nos que não existem em fechados com menor custo
+;;; (no-existe-abertos [sucessoresL: lista de sucessores][fechados: lista de fechados)
+(defun compile-sucessores-fechados (sucessoresL fechados)
+ (mapcar #'(lambda (x) (no-existe-fechados x fechados)) sucessoresL)
+)
+
+;;; ####################################################################################################################################################################################################################################
+;;; DFS ################################################################################################################################################################################################################################
+;;; ####################################################################################################################################################################################################################################
+
+(defun dls (depth &optional (operadores (operadores)) (stack (list (no-teste))) visited pop-no (it 1)(bool 0))
+ (cond
+  ((and (not(eq bool 1))(null stack)) nil)
+  ((eq it 1)(dls depth operadores (cdr stack) (append (list (car stack)) visited) (car stack) 2 (+ bool 1)))
+  ((and (eq it 2)(< (no-profundidade pop-no) depth))(dls depth operadores stack visited pop-no 3 1))
+  ((and (eq it 2)(>= (no-profundidade pop-no) depth))(dls depth operadores stack visited pop-no 1 1))
+  ((and (eq it 3)(sucessor-e-objetivo (sucessores pop-no operadores))) (list (sucessor-e-objetivo (sucessores pop-no operadores))(+(length stack)(length visited))(+ 1 (length visited))))
+  (t (dls depth operadores (append (compile-sucessores-fechados (compile-sucessores-abertos (sucessores pop-no operadores) stack) visited) stack) visited pop-no 1 1))
+ )
+)
+
+;;; ####################################################################################################################################################################################################################################
+;;; A* #################################################################################################################################################################################################################################
+;;; ####################################################################################################################################################################################################################################
+
+;;; Implementação do A*.
+;;; (a* [operadores: Conjunto de Operadores] [abertos: Lista de abertos inicializada com o no incial] [fechados: Lista de fechados vazia] [pop-no: Atomo que guarda o no retirado da lista de abertos] [it: Atmo de controlo dentro da função recursiva] [bool: Atmo que impede que a função recursiva de devolver nil na primeira iteração]
+(defun a* (&optional (operadores (operadores)) (abertos (list (no-teste))) fechados pop-no (it 3)(bool 0))
+ (cond
+  ((and (not(eq bool 1))(null abertos)) nil) ;;; SE A LISTA DE ABERTOS FOR NULL ENTÃO NÃO EXSITE NO OBJETIVO
+  ((eq it 3) (a* operadores (abertos-sem-no-menor-custo-a* abertos (pos-no-menor-custo-a* abertos)) fechados (no-menor-custo-a* abertos) 0 (+ bool 1))) ;;; RETIRA O NO DE MENOR CUSTO DE ABERTOS, GUARDA REFERENCIA NO "NO-POP"
+  ((sucessor-e-objetivo (sucessores pop-no operadores)) (list (sucessor-e-objetivo (sucessores pop-no operadores))(+(length abertos)(length fechados)) (+ 1 (length fechados)))) ;;; SE ALGUM NO SUCESSOR FOR NO OBJETIVO DEVOLVE
+  (t (a* operadores (append abertos (compile-sucessores-fechados-a* (compile-sucessores-abertos-a* (sucessores pop-no operadores) abertos) fechados)) (append (list pop-no) fechados) pop-no 3 1)) ;;; SENAO ABERTOS RECEBE NOS SUCESSORES NAO REPETIDOS OU REPETIDOS COM MENOR CUSTO , FECHADOS RECEBE O "NO-POP"
+ )
+)
+
+;;; Devolve a posição na lista de abertos do no de menor custo.
+;;; (pos-no-menor-custo-a* [abertos: Lista de abertos] [no: Primeiro no da Lista de abertos] [i: Atmo auxiliar] [pos: Atmo devolve a posição do no] )
 (defun pos-no-menor-custo-a* (abertos &optional (no (car abertos)) (i 0)(pos 0))
  (cond
   ((null abertos) pos)
@@ -215,6 +263,8 @@
  )
 )
 
+;;; Devolve o no da lista de abertos de menor custo.
+;;; (no-menor-custo-a* [abertos: Lista de abertos] [no: Primeiro no da Lista de abertos] [i: Atmo auxiliar] [pos: Atmo devolve a posição do no] )
 (defun no-menor-custo-a* (abertos &optional (no (car abertos)) (i 0)(pos 0))
  (cond
   ((null abertos) no)
@@ -223,6 +273,8 @@
  )
 )
 
+;;; Devolve a lista de abertos sem o no de menor custo
+;;; (pos-no-menor-custo-a* [abertos: Lista de abertos] [pos: Posição do no na lista])
 (defun abertos-sem-no-menor-custo-a* (abertos pos)
  (cond
   ((eq 1(length abertos)) (cdr abertos))
@@ -230,48 +282,53 @@
  )
 )
 
-(defun sucessor-e-objetivo-a* (sucessoresL)
+;;; Verifica se no é objetivo
+;;; (sucessor-e-objetivo [sucessoresL: Lista de sucessores])
+(defun sucessor-e-objetivo (sucessoresL)
  (cond
   ((null sucessoresL) nil)
-  ((eq (no-heuristica (car sucessoresL)) 0) (car sucessoresL))
-  (t (sucessor-e-objetivo-a* (cdr sucessoresL)))
+  ((no-objetivop (car sucessoresL)) (car sucessoresL))
+  (t (sucessor-e-objetivo (cdr sucessoresL)))
  )
 )
 
-(defun no-existe-abertos (no abertos)
+;;; Verifica se o no já existe em abertos com maior custo
+;;; (no-existe-abertos [no: no a comparar][abertos: lista de abertos])
+(defun no-existe-abertos-a* (no abertos)
  (cond
   ((null abertos) no)
   ((and (eq (no-estado no)(no-estado (car abertos)))(< (no-custo (car abertos))(no-custo no))) nil)
-  (t (no-existe-abertos no (cdr abertos)))
+  (t (no-existe-abertos-a* no (cdr abertos)))
  )
 )
 
-(defun no-existe-fechados (no fechados)
+;;; Verifica se o no já existe em fechados com maior custo
+;;; (no-existe-abertos [no: no a comparar][fechados: lista de fechados)
+(defun no-existe-fechados-a* (no fechados)
  (cond
   ((null fechados) no)
   ((and (eq (no-estado no)(no-estado (car fechados)))(< (no-custo (car fechados))(no-custo no))) nil)
-  (t (no-existe-fechados no (cdr fechados)))
+  (t (no-existe-fechados-a* no (cdr fechados)))
  )
 )
 
-(defun compile-sucessores-abertos (sucessoresL abertos)
- (mapcar #'(lambda (x) (no-existe-abertos x abertos)) sucessoresL)
+;;;Compila todos os nos que não existem em abertos com menor custo
+;;; (no-existe-abertos [sucessoresL: lista de sucessoresr][abertos: lista de abertos)
+(defun compile-sucessores-abertos-a* (sucessoresL abertos)
+ (mapcar #'(lambda (x) (no-existe-abertos-a* x abertos)) sucessoresL)
 )
 
-(defun compile-sucessores-fechados (sucessoresL fechados)
- (mapcar #'(lambda (x) (no-existe-fechados x fechados)) sucessoresL)
+;;;Compila todos os nos que não existem em fechados com menor custo
+;;; (no-existe-abertos [sucessoresL: lista de sucessores][fechados: lista de fechados)
+(defun compile-sucessores-fechados-a* (sucessoresL fechados)
+ (mapcar #'(lambda (x) (no-existe-fechados-a* x fechados)) sucessoresL)
 )
 
-;;; Implementação do A*.
-;;; (a* [operadores: Conjunto de Operadores] [abertos: Lista de abertos inicializada com o no incial] [fechados: Lista de fechados vazia] [pop-no: Atomo que guarda o no retirado da lista de abertos] [it: Atmo de controlo dentro da função recursiva] [bool: Atmo que impede que a função recursiva de devolver nil na primeira iteração]
 
-;;; Devolve a posição na lista de abertos do no de menor custo.
-;;; (pos-no-menor-custo-a* [abertos: Lista de abertos] [no: Primeiro no da Lista de abertos] [i: Atmo auxiliar] [pos: Atmo devolve a posição do no] )
 
-;;; Devolve o no da lista de abertos de menor custo.
-;;; (pos-no-menor-custo-a* [abertos: Lista de abertos] [no: Primeiro no da Lista de abertos] [i: Atmo auxiliar] [pos: Atmo devolve a posição do no] )
 
-;;; Devolve a lista de abertos sem o no de menor custo
-;;; (pos-no-menor-custo-a* [abertos: Lista de abertos] [pos: Posição do no na lista])
 
-;;; Verifica se no é objetivo
+
+
+
+
