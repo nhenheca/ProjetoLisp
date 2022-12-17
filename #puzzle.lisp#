@@ -45,23 +45,9 @@
 
 ;;; Tabuleiro
  "Retorna um tabuleiro 3x3 (3 arcos na vertical por 3 arcos na horizontal)"
-(defun tabuleiro-testeOG ()
-    '(
-        ((0 0 0) (0 0 1) (0 1 1) (0 0 1))
-        ((0 0 0) (0 1 1) (1 0 1) (0 1 1))
-    )
-)
+
 (defun tabuleiro-teste ()
-    '(
-        ((0 0 0) (0 0 1) (0 1 1) (0 0 1))
-        ((0 0 0) (0 1 0) (0 0 1) (0 1 1))
-    )
-)
-(defun tabuleiro-teste1 ()
-    '(
-        ((0 0 1 0) (1 1 1 1) (0 0 1 1) (0 0 1 1) (0 0 1 1))
-        ((0 0 1 1) (0 0 1 1) (1 1 1 1) (1 0 1 1) (0 1 1 1))
-    )
+ (get-tabuleiro)
 )
 
 ;;; SELETORES ;;;

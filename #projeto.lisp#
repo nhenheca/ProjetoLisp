@@ -8,7 +8,7 @@
 
 ;;NOVO
 (defun my-get-tab (i path)
- (with-open-file (stream "C:/Users/202001391/Documents/GitHub/ProjetoLisp/problem.dat" :direction :input) 
+ (with-open-file (stream "C:/Users/Jessie/Documents/GitHub/ProjetoLisp/problem.dat" :direction :input) 
   (tab stream i) 
  )
 )
