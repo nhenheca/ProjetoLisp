@@ -33,13 +33,13 @@
 
 (defun novo-sucessor (pai op)
  (cond
-  ((null (funcall (first op) (second op) (third op) (funcall (car (fourth op)) pai))) nil)
-  (t (cria-no (funcall (first op) (second op) (third op) (funcall (car (fourth op)) pai)) (+ 1 (no-profundidade pai)) (heuristica (list (funcall (first op) (second op) (third op) (funcall (car (fourth op)) pai))) (length (car (no-estado pai))) (get-objective))  pai))
+  ((equal nil (funcall (first op) pai (second op) (third op) (funcall (car (fourth op)) pai))) nil)
+  (t (print (cria-no (funcall (first op) pai (second op) (third op) (funcall (car (fourth op)) pai)) (+ 1 (no-profundidade pai)) (heuristica (list (funcall (first op) pai (second op) (third op) (funcall (car (fourth op)) pai))) (length (car (no-estado pai))) (get-objective))  pai)))
  )
 )
 
 (defun sucessores (no opsList)
- (remove nil (mapcar #'(lambda (op) (novo-sucessor no op)) opsList))
+ (length (remove nil (mapcar #'(lambda (op) (novo-sucessor no op)) opsList)))
 )
 ;;;MIGUEL GABRIEL MARQUES #########################################################
 
@@ -47,7 +47,7 @@
  "Retorna um tabuleiro 3x3 (3 arcos na vertical por 3 arcos na horizontal)"
 
 (defun tabuleiro-teste ()
- (with-open-file (stream "C:/Users/Jessie/Documents/GitHub/ProjetoLisp/memoria.pt" :direction :input) 
+ (with-open-file (stream "C:/Users/nhenhecas/Documents/GitHub/ProjetoLisp/memoria.pt" :direction :input) 
   (car (read stream))
  )
 )
@@ -97,21 +97,21 @@
 ;;; OPERADORES ;;;
 ;;;(arco-horizontal 3 1 (get-arcos-verticais (no-teste)))
 ;;;((0 0 0) (0 0 1) (1 1 1) (0 0 1) (0 0 0) (0 1 1) (1 0 1) (0 1 1))
-(defun arco-horizontal (pos i l &optional (z 1))
+(defun arco-horizontal (no pos i l &optional (z 1))
  (cond
-  ((equal nil (get-arco-na-posicao pos i (get-arcos-horizontais (no-teste)))) nil)
-  ((= 1 (get-arco-na-posicao pos i (get-arcos-horizontais (no-teste)))) nil)
-  (t (list (arco-na-posicao pos i (get-arcos-horizontais (no-teste)) z)  l))
+  ((equal nil (get-arco-na-posicao pos i (get-arcos-horizontais no))) nil)
+  ((= 1 (get-arco-na-posicao pos i (get-arcos-horizontais no))) nil)
+  (t (list (arco-na-posicao pos i (get-arcos-horizontais no) z)  l))
  )
 )
 
 ;;;(arco-vertical 1 2 (get-arcos-horizontais (no-teste)))
 ;;;(((0 0 0) (0 0 1) (0 1 1) (0 0 1))((0 1 0) (0 1 1) (1 0 1) (0 1 1)))
-(defun arco-vertical (pos i l &optional (z 1))
+(defun arco-vertical (no pos i l &optional (z 1))
  (cond
-  ((equal nil (get-arco-na-posicao pos i (get-arcos-verticais (no-teste)))) nil)
-  ((= 1 (get-arco-na-posicao pos i (get-arcos-verticais (no-teste)))) nil)
-  (t (list l (arco-na-posicao pos i (get-arcos-verticais (no-teste)) z)))
+  ((equal nil (get-arco-na-posicao pos i (get-arcos-verticais no))) nil)
+  ((= 1 (get-arco-na-posicao pos i (get-arcos-verticais no))) nil)
+  (t (list l (arco-na-posicao pos i (get-arcos-verticais no) z)))
  )
 )
 
@@ -156,13 +156,13 @@
 )
 
 (defun get-cl ()
- (with-open-file (stream "C:/Users/Jessie/Documents/GitHub/ProjetoLisp/memoria.pt" :direction :input) 
+ (with-open-file (stream "C:/Users/nhenhecas/Documents/GitHub/ProjetoLisp/memoria.pt" :direction :input) 
   (length (caar (read stream)))
  )
 )
 
 (defun get-objective ()
- (with-open-file (stream "C:/Users/Jessie/Documents/GitHub/ProjetoLisp/memoria.pt" :direction :input) 
+ (with-open-file (stream "C:/Users/nhenhecas/Documents/GitHub/ProjetoLisp/memoria.pt" :direction :input) 
   (second (read stream))
  )
 )
