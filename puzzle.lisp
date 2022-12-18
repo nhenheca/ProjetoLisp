@@ -34,12 +34,12 @@
 (defun novo-sucessor (pai op)
  (cond
   ((equal nil (funcall (first op) pai (second op) (third op) (funcall (car (fourth op)) pai))) nil)
-  (t (print (cria-no (funcall (first op) pai (second op) (third op) (funcall (car (fourth op)) pai)) (+ 1 (no-profundidade pai)) (heuristica (list (funcall (first op) pai (second op) (third op) (funcall (car (fourth op)) pai))) (length (car (no-estado pai))) (get-objective))  pai)))
+  (t (cria-no (funcall (first op) pai (second op) (third op) (funcall (car (fourth op)) pai)) (+ 1 (no-profundidade pai)) (heuristica (list (funcall (first op) pai (second op) (third op) (funcall (car (fourth op)) pai))) (length (car (no-estado pai))) (get-objective))  pai))
  )
 )
 
 (defun sucessores (no opsList)
- (length (remove nil (mapcar #'(lambda (op) (novo-sucessor no op)) opsList)))
+ (remove nil (mapcar #'(lambda (op) (novo-sucessor no op)) opsList))
 )
 ;;;MIGUEL GABRIEL MARQUES #########################################################
 
