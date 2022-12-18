@@ -1,0 +1,53 @@
+;;NOVO
+(defun my-get-tab (i)
+ (with-open-file (stream "C:/Users/Jessie/Documents/GitHub/ProjetoLisp/problem.dat" :direction :input) 
+  (tab stream i) 
+ )
+)
+
+;; Contagem a partir de 0
+(defun tab (stream i)
+ (let ((problema (read stream)))
+  (cond
+   ((zerop i) problema)
+   (t (tab stream (- i 1)))
+  )
+ )
+)
+
+(defun get-number-of-lines ()
+ (with-open-file (stream "C:/Users/Jessie/Documents/GitHub/ProjetoLisp/problem.dat" :direction :input) 
+  (get-number-of-lines-aux stream) 
+ )
+)
+
+;; Contagem a partir de 0
+(defun get-number-of-lines-aux (stream &optional (i 0))
+ (cond
+  ((eq nil (read stream nil nil)) i)
+  (t (get-number-of-lines-aux stream (+ i 1)))
+ )   
+)
+ 
+(defun menu-escolher-tabuleiro ()
+ (format t "|-------------------------|~%")
+ (format t "|                         |~%")
+ (format t "|   ESCOLHA O TABULEIRO   |~%")
+ (format t "|                         |~%")
+ (menu-escolher-tabuleiro-content)
+ (ler-op-tabuleiro)
+)
+
+(defun menu-escolher-tabuleiro-content (&optional (i (get-number-of-lines)))
+ (cond
+  ((zerop i) (format t "|                         |~%|-------------------------|~%"))
+  (t (format t "|    ~d - Tabuleiro ~d      |~%" (1- i) (1- i))(menu-escolher-tabuleiro-content (- i 1)))
+ )
+)
+
+(defun ler-op-tabuleiro ()
+ (format t "Digite o numero do tabuleiro indicados: ")
+ (with-open-file (str "C:/Users/Jessie/Documents/GitHub/ProjetoLisp/memoria.pt" :direction :output :if-exists :supersede :if-does-not-exist :create)
+  (format t str "oi" )
+ )
+)
