@@ -4,7 +4,7 @@
 )
 
 (defun my-get-tab (i)
- (with-open-file (stream "C:/Users/Jessie/Documents/GitHub/ProjetoLisp/problem.dat" :direction :input) 
+ (with-open-file (stream "C:/Users/nhenhecas/Documents/GitHub/ProjetoLisp/problem.dat" :direction :input) 
   (tab stream i) 
  )
 )
@@ -20,7 +20,7 @@
 )
 
 (defun get-number-of-lines ()
- (with-open-file (stream "C:/Users/Jessie/Documents/GitHub/ProjetoLisp/problem.dat" :direction :input) 
+ (with-open-file (stream "C:/Users/nhenhecas/Documents/GitHub/ProjetoLisp/problem.dat" :direction :input) 
   (get-number-of-lines-aux stream) 
  )
 )
@@ -56,7 +56,7 @@
 
 (defun ler-op-tabuleiro ()
  (format t "Digite o numero do tabuleiro indicados: ")
- (with-open-file (str "C:/Users/Jessie/Documents/GitHub/ProjetoLisp/memoria.pt" :direction :output :if-exists :supersede :if-does-not-exist :create)
+ (with-open-file (str "C:/Users/nhenhecas/Documents/GitHub/ProjetoLisp/memoria.pt" :direction :output :if-exists :supersede :if-does-not-exist :create)
   (format str "~a" (my-get-tab (- (read) 1)))
  )
 )
@@ -81,7 +81,7 @@
  (let ((op (read)))
   (cond
    ((eq 2 op) (format t "~%Digite a profundidade: ")(dls (read)))
-   ((eq 1 op) (bfs))
+   ((eq 1 op) (bfs2 (operadores)))
    ((eq 3 op) (a*))
    ((eq 0 op) (menu-escolher-tabuleiro))
    (t (menu-escolher-algoritmo))

@@ -75,13 +75,13 @@
 ;;;Compila todos os nos que não existem em abertos com menor custo
 ;;; (no-existe-abertos [sucessoresL: lista de sucessoresr][abertos: lista de abertos)
 (defun compile-sucessores-abertos-a* (sucessoresL abertos)
- (mapcar #'(lambda (x) (no-existe-abertos-a* x abertos)) sucessoresL)
+ (remove nil (mapcar #'(lambda (x) (no-existe-abertos-a* x abertos)) sucessoresL))
 )
 
 ;;;Compila todos os nos que não existem em fechados com menor custo
 ;;; (no-existe-abertos [sucessoresL: lista de sucessores][fechados: lista de fechados)
 (defun compile-sucessores-fechados-a* (sucessoresL fechados)
- (mapcar #'(lambda (x) (no-existe-fechados-a* x fechados)) sucessoresL)
+ (remove nil (mapcar #'(lambda (x) (no-existe-fechados-a* x fechados)) sucessoresL))
 )
 
 ;;; ####################################################################################################################################################################################################################################

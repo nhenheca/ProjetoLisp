@@ -150,3 +150,40 @@
 (defun compile-sucessores-fechados (sucessoresL fechados)
  (mapcar #'(lambda (x) (no-existe-fechados x fechados)) sucessoresL)
 )
+
+(defun bfs2 (operadores &optional (abertos (list (no-teste))) fechados)
+ (cond 
+  ((null abertos) nil)
+  ((not(eq nil (objetivo2 (sucessores (car abertos) operadores)))) (list (objetivo2 (sucessores (car abertos) operadores)) (+(length abertos)(length fechados))(- (length fechados) 1)))
+  (t (bfs2 operadores (append (cdr abertos) (compile-sucessores-abertos2 (sucessores (car abertos) operadores) abertos)) (cons (car abertos) (colocar-fechados (car abertos) fechados))))
+ ) 
+)
+
+;(defun sucessores (no osList)
+(defun compile-sucessores-abertos2 (sucessoresL abertos)
+ (remove nil (mapcar #'(lambda (x) (no-existe-abertos2 x abertos)) sucessoresL))
+)
+
+(defun no-existe-abertos2 (no abertos)
+ (cond
+  ((null abertos) no)
+  ((equal (no-estado no)(no-estado (car abertos))) nil)
+  (t (no-existe-abertos2 no (cdr abertos)))
+ )
+)
+
+(defun objetivo2 (sucessores)
+ (cond
+  ((null sucessores) nil)
+  ((equal 0 (no-heuristica (car sucessores))) (car sucessores))
+  (t (objetivo2 (cdr sucessores)))
+ )
+)
+
+(defun colocar-fechados (no fechados)
+ (cond 
+  ((null (car fechados)) (append no fechados))
+  ((equal no (car fechados)) fechados)
+  (t (colocar-fechados no (cdr fechados)))
+ )
+)
