@@ -142,11 +142,11 @@
 )
 
 (defun heuristica (no objective &optional (cl (length (car (no-estado no)))))
- (- objective (nCaixasFechadas no cl))
+ (- objective (nCaixasFechadas no))
 )
 
 (defun minha-heuristica (no objective &optional (cl (length (car (no-estado no)))))
- (- objective (nCaixasFechadas no cl))
+ (- objective (nCaixasFechadas no))
 )
 
 (defun no-objetivop (no objetivo &optional (cl (length (car (no-estado no)))))
