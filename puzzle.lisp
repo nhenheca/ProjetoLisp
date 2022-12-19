@@ -10,20 +10,20 @@
  (car no)
 )
 
-(defun no-profundidade (no-teste)
- (second no-teste)
+(defun no-profundidade (no)
+ (second no)
 )
 
-(defun no-pai (no-teste)
- (fourth no-teste)
+(defun no-pai (no)
+ (fourth no)
 )
 
-(defun no-heuristica (no-teste)
- (third no-teste)
+(defun no-heuristica (no)
+ (third no)
 )
 
-(defun no-custo(no-teste)
-  (+ (no-profundidade no-teste) (no-heuristica no-teste))
+(defun no-custo(no)
+  (+ (no-profundidade no) (no-heuristica no))
 )
 
 ;;;Construtor
@@ -132,21 +132,32 @@
  )
 )
 
-(defun nCaixasAbertas (no &optional (cl (length (car (no-estado no)))) (iL 1)(posL 1)(iC 1)(posC 1)(caixas 0)(itNumber 1))
+;(defun nCaixasAbertas (no &optional (cl (length (car (no-estado no)))) (iL 1)(posL 1)(iC 1)(posC 1)(caixas 0)(itNumber 1))
+; (cond
+;  ((equal itNumber cl) caixas)
+;  ((equal cl posC) (nCaixasAbertas no cl 1 (+ posL 1) (+ iC 1) 1 caixas (+ itNumber 1)))
+;  ((equal 3 (+ (get-arco-na-posicao posL iL (get-arcos-horizontais no))(get-arco-na-posicao (+ 1 posL) iL (get-arcos-horizontais no))(get-arco-na-posicao posC iC (get-arcos-verticais no))(get-arco-na-posicao (+ 1 posC) iC (get-arcos-verticais no)))) (nCaixasAbertas no cl (+ iL 1) posL iC (+ posC 1)(+ caixas 1) itNumber))
+;  ((not (equal 3 (+ (get-arco-na-posicao posL iL (get-arcos-horizontais no))(get-arco-na-posicao (+ 1 posL) iL (get-arcos-horizontais no))(get-arco-na-posicao posC iC (get-arcos-verticais no))(get-arco-na-posicao (+ 1 posC) iC (get-arcos-verticais no))))) (nCaixasAbertas no cl (+ iL 1) posL iC (+ posC 1) caixas itNumber))
+; )
+;)
+
+;;(get-arco-na-posicao 2 3 (get-arcos-horizontais (no-teste)))
+(defun bom-vizinho (no &optional (cl (length (car (no-estado no)))) (iL 1)(posL 1)(iC 1)(posC 1)(soma 0)(itNumber 1))
  (cond
-  ((equal itNumber cl) caixas)
-  ((equal cl posC) (nCaixasAbertas no cl 1 (+ posL 1) (+ iC 1) 1 caixas (+ itNumber 1)))
-  ((equal 3 (+ (get-arco-na-posicao posL iL (get-arcos-horizontais no))(get-arco-na-posicao (+ 1 posL) iL (get-arcos-horizontais no))(get-arco-na-posicao posC iC (get-arcos-verticais no))(get-arco-na-posicao (+ 1 posC) iC (get-arcos-verticais no)))) (nCaixasAbertas no cl (+ iL 1) posL iC (+ posC 1)(+ caixas 1) itNumber))
-  ((not (equal 3 (+ (get-arco-na-posicao posL iL (get-arcos-horizontais no))(get-arco-na-posicao (+ 1 posL) iL (get-arcos-horizontais no))(get-arco-na-posicao posC iC (get-arcos-verticais no))(get-arco-na-posicao (+ 1 posC) iC (get-arcos-verticais no))))) (nCaixasAbertas no cl (+ iL 1) posL iC (+ posC 1) caixas itNumber))
+  ((equal itNumber cl) soma)
+  ((equal cl posC) (bom-vizinho no cl 1 (+ posL 1) (+ iC 1) 1 soma (+ itNumber 1)))
+  ((equal nil (remove nil (list (get-arco-na-posicao posL iL (get-arcos-horizontais no))(get-arco-na-posicao (+ 1 posL) iL (get-arcos-horizontais no))(get-arco-na-posicao posC iC (get-arcos-verticais no))(get-arco-na-posicao (+ 1 posC) iC (get-arcos-verticais no))))) (bom-vizinho no cl (+ iL 1) posL iC (+ posC 1)(+ soma 4) itNumber))
+  (t (bom-vizinho no cl (+ iL 1) posL iC (+ posC 1)  (+ soma (- 4 (apply '+ (remove nil (list (get-arco-na-posicao posL iL (get-arcos-horizontais no))(get-arco-na-posicao (+ 1 posL) iL (get-arcos-horizontais no))(get-arco-na-posicao posC iC (get-arcos-verticais no))(get-arco-na-posicao (+ 1 posC) iC (get-arcos-verticais no))))))) itNumber))
  )
 )
 
-(defun heuristica (no objective &optional (cl (length (car (no-estado no)))))
+
+(defun heuristica2 (no objective)
  (- objective (nCaixasFechadas no))
 )
 
-(defun minha-heuristica (no objective &optional (cl (length (car (no-estado no)))))
- (- objective (nCaixasFechadas no))
+(defun heuristica (no &optional objective)
+ (bom-vizinho no)
 )
 
 (defun no-objetivop (no objetivo &optional (cl (length (car (no-estado no)))))
