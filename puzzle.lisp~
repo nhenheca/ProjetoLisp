@@ -34,7 +34,7 @@
 (defun novo-sucessor (pai op)
  (cond
   ((equal nil (funcall (first op) pai (second op) (third op) (funcall (car (fourth op)) pai))) nil)
-  (t (cria-no (funcall (first op) pai (second op) (third op) (funcall (car (fourth op)) pai)) (+ 1 (no-profundidade pai)) (heuristica (list (funcall (first op) pai (second op) (third op) (funcall (car (fourth op)) pai))) (length (car (no-estado pai))) (get-objective))  pai))
+  (t (cria-no (funcall (first op) pai (second op) (third op) (funcall (car (fourth op)) pai)) (+ 1 (no-profundidade pai)) (heuristica (list (funcall (first op) pai (second op) (third op) (funcall (car (fourth op)) pai))) (get-objective))  pai))
  )
 )
 
@@ -125,7 +125,7 @@
 )
 
 ;;(get-arco-na-posicao 2 3 (get-arcos-horizontais (no-teste)))
-(defun nCaixasFechadas (no cl &optional (iL 1)(posL 1)(iC 1)(posC 1)(caixas 0)(itNumber 1))
+(defun nCaixasFechadas (no &optional (cl (length (car (no-estado (no-teste))))) (iL 1)(posL 1)(iC 1)(posC 1)(caixas 0)(itNumber 1))
  (cond
   ((equal itNumber cl) caixas)
   ((equal cl posC) (nCaixasFechadas no cl 1 (+ posL 1) (+ iC 1) 1 caixas (+ itNumber 1)))
@@ -134,7 +134,7 @@
  )
 )
 
-(defun nCaixasAbertas (no cl &optional (iL 1)(posL 1)(iC 1)(posC 1)(caixas 0)(itNumber 1))
+(defun nCaixasAbertas (no &optional (cl (length (car (no-estado no)))) (iL 1)(posL 1)(iC 1)(posC 1)(caixas 0)(itNumber 1))
  (cond
   ((equal itNumber cl) caixas)
   ((equal cl posC) (nCaixasAbertas no cl 1 (+ posL 1) (+ iC 1) 1 caixas (+ itNumber 1)))
@@ -143,13 +143,17 @@
  )
 )
 
-(defun heuristica (no cl objective)
+(defun heuristica (no objective &optional (cl (length (car (no-estado no)))))
  (- objective (nCaixasFechadas no cl))
 )
 
-(defun no-objetivop (no)
+(defun minha-heuristica (no objective &optional (cl (length (car (no-estado no)))))
+ (- objective (nCaixasFechadas no cl))
+)
+
+(defun no-objetivop (no objetivo &optional (cl (length (car (no-estado no)))))
  (cond
-  ((eq 0 (no-heuristica no)) T)
+  ((equal objetivo (nCaixasFechadas no cl)) T)
   (t nil)
  )
  

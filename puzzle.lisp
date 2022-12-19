@@ -2,7 +2,7 @@
 
 ;;;Retorna um tabuleiro 3x3 (3 arcos na vertical por 3 arcos na horizontal) Profundidade Heuristica Pai"
 (defun no-teste ()
- (list (tabuleiro-teste) 0 (heuristica (list (tabuleiro-teste) 0 0 nil) (get-cl) (get-objective)) nil)
+ (list (tabuleiro-teste) 0 (heuristica (list (tabuleiro-teste) 0 0 nil) (get-objective)) nil)
 )
 
 ;;;Seleciona dentro do no o tabuleiro
@@ -47,9 +47,7 @@
  "Retorna um tabuleiro 3x3 (3 arcos na vertical por 3 arcos na horizontal)"
 
 (defun tabuleiro-teste ()
- (with-open-file (stream "C:/Users/nhenhecas/Documents/GitHub/ProjetoLisp/memoria.pt" :direction :input) 
-  (car (read stream))
- )
+ (get-tabuleiro)
 )
 
 ;;; SELETORES ;;;
@@ -116,7 +114,7 @@
 )
 
 ;;;Devolve a lista de operadores
-(defun operadores (&optional (cl (length (car (no-estado (no-teste))))) (pos 1) (i 1))
+(defun operadores (cl &optional (pos 1) (i 1))
  (cond
   ((equal pos (+ 1 cl)) nil)
   ((not (equal cl i)) (append (list(list 'arco-vertical pos i '(get-arcos-horizontais ))) (list(list 'arco-horizontal pos i '(get-arcos-verticais ))) (operadores cl pos (+ i 1))) )
@@ -125,7 +123,7 @@
 )
 
 ;;(get-arco-na-posicao 2 3 (get-arcos-horizontais (no-teste)))
-(defun nCaixasFechadas (no &optional (cl (length (car (no-estado (no-teste))))) (iL 1)(posL 1)(iC 1)(posC 1)(caixas 0)(itNumber 1))
+(defun nCaixasFechadas (no &optional (cl (length (car (no-estado no)))) (iL 1)(posL 1)(iC 1)(posC 1)(caixas 0)(itNumber 1))
  (cond
   ((equal itNumber cl) caixas)
   ((equal cl posC) (nCaixasFechadas no cl 1 (+ posL 1) (+ iC 1) 1 caixas (+ itNumber 1)))
@@ -157,16 +155,4 @@
   (t nil)
  )
  
-)
-
-(defun get-cl ()
- (with-open-file (stream "C:/Users/nhenhecas/Documents/GitHub/ProjetoLisp/memoria.pt" :direction :input) 
-  (length (caar (read stream)))
- )
-)
-
-(defun get-objective ()
- (with-open-file (stream "C:/Users/nhenhecas/Documents/GitHub/ProjetoLisp/memoria.pt" :direction :input) 
-  (second (read stream))
- )
 )

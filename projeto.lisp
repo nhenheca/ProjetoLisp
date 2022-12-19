@@ -56,9 +56,7 @@
 
 (defun ler-op-tabuleiro ()
  (format t "Digite o numero do tabuleiro indicados: ")
- (with-open-file (str "C:/Users/nhenhecas/Documents/GitHub/ProjetoLisp/memoria.pt" :direction :output :if-exists :supersede :if-does-not-exist :create)
-  (format str "~a" (my-get-tab (- (read) 1)))
- )
+ (setq problema (my-get-tab (- (read) 1)))
 )
 
 (defun menu-escolher-algoritmo ()
@@ -80,11 +78,23 @@
  (format t "Digite o algoritmo do tabuleiro indicados: ")
  (let ((op (read)))
   (cond
-   ((eq 2 op) (format t "~%Digite a profundidade: ")(dls (read)))
-   ((eq 1 op) (bfs))
-   ((eq 3 op) (a*))
+   ((eq 2 op) (format t "~%Digite a profundidade: ")(dls (get-objective) (read) (operadores (get-cl))))
+   ((eq 1 op) (bfs (get-objective) (operadores (get-cl))))
+   ((eq 3 op) (a* (get-objective) (operadores (get-cl))))
    ((eq 0 op) (menu-escolher-tabuleiro))
    (t (menu-escolher-algoritmo))
   )
  )
+)
+
+(defun get-objective ()
+ (second problema)
+)
+
+(defun get-tabuleiro ()
+ (car problema)
+)
+
+(defun get-cl ()
+ (length (caar problema))
 )

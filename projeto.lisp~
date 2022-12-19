@@ -81,7 +81,7 @@
  (let ((op (read)))
   (cond
    ((eq 2 op) (format t "~%Digite a profundidade: ")(dls (read)))
-   ((eq 1 op) (bfs2 (operadores)))
+   ((eq 1 op) (bfs))
    ((eq 3 op) (a*))
    ((eq 0 op) (menu-escolher-tabuleiro))
    (t (menu-escolher-algoritmo))
