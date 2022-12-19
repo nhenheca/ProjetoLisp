@@ -151,14 +151,11 @@
  )
 )
 
-
-
-(defun heuristica2 (no objective)
- (- objective (nCaixasFechadas no))
-)
-
-(defun heuristica (no &optional objective)
- (bom-vizinho no)
+(defun heuristica (no &optional objective i)
+ (cond
+  ((equal i 1) (- objective (nCaixasFechadas no)))
+  ((equal i 2) (bom-vizinho no))
+ )
 )
 
 (defun no-objetivop (no objetivo &optional (cl (length (car (no-estado no)))))
