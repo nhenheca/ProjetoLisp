@@ -152,6 +152,7 @@
 )
 
 
+
 (defun heuristica2 (no objective)
  (- objective (nCaixasFechadas no))
 )
@@ -165,5 +166,4 @@
   ((equal objetivo (nCaixasFechadas no cl)) T)
   (t nil)
  )
- 
 )
