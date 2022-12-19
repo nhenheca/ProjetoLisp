@@ -4,11 +4,11 @@
 
 ;;; Implementação do A*.
 ;;; (a* [operadores: Conjunto de Operadores] [abertos: Lista de abertos inicializada com o no incial] [fechados: Lista de fechados vazia] [pop-no: Atomo que guarda o no retirado da lista de abertos] [it: Atmo de controlo dentro da função recursiva] [bool: Atmo que impede que a função recursiva de devolver nil na primeira iteração]
-(defun a* (&optional (operadores (operadores)) (abertos (list (no-teste))) fechados pop-no (it 3)(bool 0))
+(defun a* ( objetivo &optional (operadores (operadores)) (abertos (list (no-teste))) fechados pop-no (it 3)(bool 0))
  (cond
   ((and (not(eq bool 1))(null abertos)) nil) ;;; SE A LISTA DE ABERTOS FOR NULL ENTÃO NÃO EXSITE NO OBJETIVO
   ((eq it 3) (a* operadores (abertos-sem-no-menor-custo-a* abertos (pos-no-menor-custo-a* abertos)) fechados (no-menor-custo-a* abertos) 0 (+ bool 1))) ;;; RETIRA O NO DE MENOR CUSTO DE ABERTOS, GUARDA REFERENCIA NO "NO-POP"
-  ((sucessor-e-objetivo (sucessores pop-no operadores)) (list (sucessor-e-objetivo (sucessores pop-no operadores))(+(length abertos)(length fechados)) (+ 1 (length fechados)))) ;;; SE ALGUM NO SUCESSOR FOR NO OBJETIVO DEVOLVE
+  ((sucessor-e-objetivo (sucessores pop-no operadores) objetivo) (list (sucessor-e-objetivo (sucessores pop-no operadores) objetivo)(+(length abertos)(length fechados)) (+ 1 (length fechados)))) ;;; SE ALGUM NO SUCESSOR FOR NO OBJETIVO DEVOLVE
   (t (a* operadores (append abertos (compile-sucessores-fechados-a* (compile-sucessores-abertos-a* (sucessores pop-no operadores) abertos) fechados)) (append (list pop-no) fechados) pop-no 3 1)) ;;; SENAO ABERTOS RECEBE NOS SUCESSORES NAO REPETIDOS OU REPETIDOS COM MENOR CUSTO , FECHADOS RECEBE O "NO-POP"
  )
 )
@@ -44,11 +44,11 @@
 
 ;;; Verifica se no é objetivo
 ;;; (sucessor-e-objetivo [sucessoresL: Lista de sucessores])
-(defun sucessor-e-objetivo (sucessoresL)
+(defun sucessor-e-objetivo (sucessoresL objetivo)
  (cond
   ((null sucessoresL) nil)
-  ((no-objetivop (car sucessoresL)) (car sucessoresL))
-  (t (sucessor-e-objetivo (cdr sucessoresL)))
+  ((no-objetivop (car sucessoresL) objetivo) (car sucessoresL))
+  (t (sucessor-e-objetivo (cdr sucessoresL) objetivo))
  )
 )
 
@@ -90,11 +90,11 @@
 
 ;;; Implementação do BFS
 ;;; (bfs [operadores: Conjunto de Operadores] [abertos: Lista de abertos inicializada com o no incial] [fechados: Lista de fechados vazia] [pop-no: Atomo que guarda o no retirado da lista de abertos] [it: Atmo de controlo dentro da função recursiva] [bool: Atmo que impede que a função recursiva de devolver nil na primeira iteração]
-(defun bfs (&optional (operadores (operadores)) (abertos (list (no-teste))) fechados pop-no (it 1)(bool 0))
+(defun bfs (objetivo &optional (operadores (operadores)) (abertos (list (no-teste))) fechados pop-no (it 1)(bool 0))
  (cond
   ((and (not(eq bool 1))(null abertos)) nil)
   ((eq it 1) (bfs operadores (cdr abertos) (append (list (car abertos))fechados) (car abertos) 2 (+ bool 1)))
-  ((not (eq nil (sucessor-e-objetivo (sucessores pop-no operadores)))) (list (sucessor-e-objetivo (sucessores pop-no operadores))(+(length abertos)(length fechados))(- (length fechados) 1)))
+  ((not (eq nil (sucessor-e-objetivo (sucessores pop-no operadores) objetivo))) (list (sucessor-e-objetivo (sucessores pop-no operadores) objetivo)(+(length abertos)(length fechados))(- (length fechados) 1)))
   ((eq it 2) (bfs operadores (append abertos (compile-sucessores-fechados (compile-sucessores-abertos (sucessores pop-no operadores) abertos) fechados)) fechados pop-no 1 1))  
  )
 )
@@ -106,13 +106,13 @@
 
 ;;; Implementação do DLS(Depth Limit Search) = DFS+DEPTH-LIMIT
 ;;; (dls [operadores: Conjunto de Operadores] [abertos: Lista de abertos inicializada com o no incial] [fechados: Lista de fechados vazia] [pop-no: Atomo que guarda o no retirado da lista de abertos] [it: Atmo de controlo dentro da função recursiva] [bool: Atmo que impede que a função recursiva de devolver nil na primeira iteração]
-(defun dls (depth &optional (operadores (operadores)) (abertos (list (no-teste))) fechados pop-no (it 1)(bool 0))
+(defun dls (objetivo depth &optional (operadores (operadores)) (abertos (list (no-teste))) fechados pop-no (it 1)(bool 0))
  (cond
   ((and (not(eq bool 1))(null abertos)) nil)
   ((eq it 1)(dls depth operadores (butlast abertos) (append (list (car (last abertos))) fechados) (car (last abertos)) 2 (+ bool 1)))
   ((and (eq it 2)(< (no-profundidade pop-no) depth))(dls depth operadores abertos fechados pop-no 3 1))
   ((and (eq it 2)(>= (no-profundidade pop-no) depth))(dls depth operadores abertos fechados pop-no 1 1))
-  ((and (eq it 3)(sucessor-e-objetivo (sucessores pop-no operadores))) (list (sucessor-e-objetivo (sucessores pop-no operadores))(+(length abertos)(length fechados))(- (length fechados) 1)))
+  ((and (eq it 3)(sucessor-e-objetivo (sucessores pop-no operadores) objetivo)) (list (sucessor-e-objetivo (sucessores pop-no operadores) objetivo)(+(length abertos)(length fechados))(- (length fechados) 1)))
   (t (dls depth operadores (append (compile-sucessores-fechados (compile-sucessores-abertos (sucessores pop-no operadores) abertos) fechados) abertos) fechados pop-no 1 1))
  )
 )
@@ -149,41 +149,4 @@
 ;;; (no-existe-abertos [sucessoresL: lista de sucessores][fechados: lista de fechados)
 (defun compile-sucessores-fechados (sucessoresL fechados)
  (mapcar #'(lambda (x) (no-existe-fechados x fechados)) sucessoresL)
-)
-
-(defun bfs2 (operadores &optional (abertos (list (no-teste))) fechados)
- (cond 
-  ((null abertos) nil)
-  ((not(eq nil (objetivo2 (sucessores (car abertos) operadores)))) (list (objetivo2 (sucessores (car abertos) operadores)) (+(length abertos)(length fechados))(- (length fechados) 1)))
-  (t (bfs2 operadores (append (cdr abertos) (compile-sucessores-abertos2 (sucessores (car abertos) operadores) abertos)) (cons (car abertos) (colocar-fechados (car abertos) fechados))))
- ) 
-)
-
-;(defun sucessores (no osList)
-(defun compile-sucessores-abertos2 (sucessoresL abertos)
- (remove nil (mapcar #'(lambda (x) (no-existe-abertos2 x abertos)) sucessoresL))
-)
-
-(defun no-existe-abertos2 (no abertos)
- (cond
-  ((null abertos) no)
-  ((equal (no-estado no)(no-estado (car abertos))) nil)
-  (t (no-existe-abertos2 no (cdr abertos)))
- )
-)
-
-(defun objetivo2 (sucessores)
- (cond
-  ((null sucessores) nil)
-  ((equal 0 (no-heuristica (car sucessores))) (car sucessores))
-  (t (objetivo2 (cdr sucessores)))
- )
-)
-
-(defun colocar-fechados (no fechados)
- (cond 
-  ((null (car fechados)) (append no fechados))
-  ((equal no (car fechados)) fechados)
-  (t (colocar-fechados no (cdr fechados)))
- )
 )
