@@ -252,16 +252,6 @@ A nossa implementação do algoritmo inves de ordenar-nos e carregar o de menor 
 ### Heurística
 A heuristica permite aumentar a eficacia/eficiencia do algoritmo A*, uma boa heuristica produz resultados melhor.
 
-```LISP
-    (LET ((heuristica))
-      (defun definir-heuristica(x) (setf heuristica-def x))
-      (defun heuristica-usada()
-        (cond
-        ((equal heuristica-def  'base ) 'h   )
-        ((equal heuristica-def  'implementada ) 'h   )
-        (t  nil)
-        )))
-```
 ---
 #### Heuristica Base
 A heuristica disponiblizada no enuciado é:
@@ -272,10 +262,46 @@ A heuristica disponiblizada no enuciado é:
 
 *o(x) é o número de pontos de caixas fechadas*
 
+```LISP
+(defun nCaixasFechadas (no &optional (cl (length (car (no-estado no)))) (iL 1)(posL 1)(iC 1)(posC 1)(caixas 0)(itNumber 1))
+ (cond
+  ((equal itNumber cl) caixas)
+  ((equal cl posC) (nCaixasFechadas no cl 1 (+ posL 1) (+ iC 1) 1 caixas (+ itNumber 1)))
+  ((and (equal 1 (get-arco-na-posicao posL iL (get-arcos-horizontais no)))(equal 1 (get-arco-na-posicao (+ 1 posL) iL (get-arcos-horizontais no)))(equal 1 (get-arco-na-posicao posC iC (get-arcos-verticais no)))(equal 1 (get-arco-na-posicao (+ 1 posC) iC (get-arcos-verticais no)))) (nCaixasFechadas no cl (+ iL 1) posL iC (+ posC 1)(+ caixas 1) itNumber))
+  ((not(and (equal 1 (get-arco-na-posicao posL iL (get-arcos-horizontais no)))(equal 1 (get-arco-na-posicao (+ 1 posL) iL (get-arcos-horizontais no)))(equal 1 (get-arco-na-posicao posC iC (get-arcos-verticais no)))(equal 1 (get-arco-na-posicao (+ 1 posC) iC (get-arcos-verticais no))))) (nCaixasFechadas no cl (+ iL 1) posL iC (+ posC 1) caixas itNumber))
+ )
+)
+
+(defun heuristica (no &optional objective)
+ (cond
+  ((equal (get-heuristicaop) 1) (- objective (nCaixasFechadas no)))
+  ((equal (get-heuristicaop) 2) (bom-vizinho no))
+ )
+)
+```
+
 ---
 #### Heuristica Desenvolvida
 
 A nossa heuristica analisa o tabuleiro e faz o somatório do numero de arestas vizinhas que cada nó-caixa tem no momento (Um nó com mais arestas está mais "fechado" que um sem, uma caixa é composta por 4 arestas)
+
+```LISP
+(defun bom-vizinho (no &optional (cl (length (car (no-estado no)))) (iL 1)(posL 1)(iC 1)(posC 1)(soma 0)(itNumber 1))
+ (cond
+  ((equal itNumber cl) soma)
+  ((equal cl posC) (bom-vizinho no cl 1 (+ posL 1) (+ iC 1) 1 soma (+ itNumber 1)))
+  ((equal nil (remove nil (list (get-arco-na-posicao posL iL (get-arcos-horizontais no))(get-arco-na-posicao (+ 1 posL) iL (get-arcos-horizontais no))(get-arco-na-posicao posC iC (get-arcos-verticais no))(get-arco-na-posicao (+ 1 posC) iC (get-arcos-verticais no))))) (bom-vizinho no cl (+ iL 1) posL iC (+ posC 1)(+ soma 4) itNumber))
+  (t (bom-vizinho no cl (+ iL 1) posL iC (+ posC 1)  (+ soma (- 4 (apply '+ (remove nil (list (get-arco-na-posicao posL iL (get-arcos-horizontais no))(get-arco-na-posicao (+ 1 posL) iL (get-arcos-horizontais no))(get-arco-na-posicao posC iC (get-arcos-verticais no))(get-arco-na-posicao (+ 1 posC) iC (get-arcos-verticais no))))))) itNumber))
+ )
+)
+
+(defun heuristica (no &optional objective)
+ (cond
+  ((equal (get-heuristicaop) 1) (- objective (nCaixasFechadas no)))
+  ((equal (get-heuristicaop) 2) (bom-vizinho no))
+ )
+)
+```
 
 *h(x)=m(x)*
 
@@ -510,9 +536,9 @@ O output da consela é nil, informa que o algoritmo correu com sucesso até ao n
 
 
 ## FILE OUTPUT
- O output do ficheiro será uma lista constituida pelo nó objetivo, profundidade, numero total de nós gerados, numero de nós expandidos, penetração e tempo de execução.
+ O output do ficheiro será uma lista constituida pelo caminhio até ao nó objetivo, profundidade, numero total de nós gerados, numero de nós expandidos, penetração e tempo de execução.
 
+Exemplo problema E executado pelo A* com a heuristica criada. 
 ```
-
-
+(((((0 0 0 1 0 0) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 0) (0 0 1 1 1 1) (0 0 1 1 1 1)) ((0 0 0 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 1) (0 1 1 1 0 0) (0 1 1 1 1 1))) 24 23 ((((0 0 0 1 0 0) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 0) (0 0 1 1 1 1) (0 0 1 1 1 1)) ((0 0 0 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 1) (0 0 1 1 0 0) (0 1 1 1 1 1))) 23 25 ((((0 0 0 1 0 0) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 0) (0 0 1 1 1 1) (0 0 1 1 1 1)) ((0 0 0 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 0) (0 0 1 1 0 0) (0 1 1 1 1 1))) 22 27 ((((0 0 0 1 0 0) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 0) (0 0 1 1 1 1) (0 0 1 1 1 1)) ((0 0 0 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 1 1 0 1 0) (0 0 1 1 0 0) (0 1 1 1 1 1))) 21 29 ((((0 0 0 1 0 0) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 1 0 1 1 0) (0 0 1 1 1 1) (0 0 1 1 1 1)) ((0 0 0 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 1 1 0 1 0) (0 0 1 1 0 0) (0 1 1 1 1 1))) 20 31 ((((0 0 0 1 0 0) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 0 0 1 1 0) (0 0 1 1 1 1) (0 0 1 1 1 1)) ((0 0 0 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 1 1 0 1 0) (0 0 1 1 0 0) (0 1 1 1 1 1))) 19 33 ((((0 0 0 1 0 0) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 0 0 1 1 0) (0 0 1 1 1 1) (0 0 1 1 1 1)) ((0 0 0 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 0 1 0 1 0) (0 0 1 1 0 0) (0 1 1 1 1 1))) 18 35 ((((0 0 0 1 0 0) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 1) (0 0 0 1 1 0) (0 0 1 1 1 1) (0 0 1 1 1 1)) ((0 0 0 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 0 1 0 1 0) (0 0 1 1 0 0) (0 1 1 1 1 1))) 17 37 ((((0 0 0 1 0 0) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 0) (0 0 0 1 1 0) (0 0 1 1 1 1) (0 0 1 1 1 1)) ((0 0 0 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 0 1 0 1 0) (0 0 1 1 0 0) (0 1 1 1 1 1))) 16 39 ((((0 0 0 1 0 0) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 0) (0 0 0 1 1 0) (0 0 1 1 1 1) (0 0 1 1 1 1)) ((0 0 0 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 0) (1 0 1 0 1 0) (0 0 1 1 0 0) (0 1 1 1 1 1))) 15 41 ((((0 0 0 1 0 0) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 0) (0 0 0 1 1 0) (0 0 1 1 1 1) (0 0 1 1 1 1)) ((0 0 0 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 1 1 1 0 0) (1 0 1 0 1 0) (0 0 1 1 0 0) (0 1 1 1 1 1))) 14 43 ((((0 0 0 1 0 0) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 1 0 1 1 0) (0 0 0 1 1 0) (0 0 1 1 1 1) (0 0 1 1 1 1)) ((0 0 0 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 1 1 1 0 0) (1 0 1 0 1 0) (0 0 1 1 0 0) (0 1 1 1 1 1))) 13 45 ((((0 0 0 1 0 0) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 0 0 1 1 0) (0 0 0 1 1 0) (0 0 1 1 1 1) (0 0 1 1 1 1)) ((0 0 0 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 1 1 1 0 0) (1 0 1 0 1 0) (0 0 1 1 0 0) (0 1 1 1 1 1))) 12 47 ((((0 0 0 1 0 0) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 0 0 1 1 0) (0 0 0 1 1 0) (0 0 1 1 1 1) (0 0 1 1 1 1)) ((0 0 0 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 0 1 1 0 0) (1 0 1 0 1 0) (0 0 1 1 0 0) (0 1 1 1 1 1))) 11 49 ((((0 0 0 1 0 0) (1 1 1 1 1 1) (1 1 1 1 1 1) (0 0 0 1 1 0) (0 0 0 1 1 0) (0 0 1 1 1 1) (0 0 1 1 1 1)) ((0 0 0 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 1) (1 0 1 1 0 0) (1 0 1 0 1 0) (0 0 1 1 0 0) (0 1 1 1 1 1))) 10 51 ((((0 0 0 1 0 0) (1 1 1 1 1 1) (1 1 1 1 1 1) (0 0 0 1 1 0) (0 0 0 1 1 0) (0 0 1 1 1 1) (0 0 1 1 1 1)) ((0 0 0 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 1) (0 0 1 1 0 0) (1 0 1 0 1 0) (0 0 1 1 0 0) (0 1 1 1 1 1))) 9 53 ((((0 0 0 1 0 0) (1 1 1 1 1 1) (1 1 1 1 1 0) (0 0 0 1 1 0) (0 0 0 1 1 0) (0 0 1 1 1 1) (0 0 1 1 1 1)) ((0 0 0 1 1 1) (1 1 1 1 1 1) (1 1 1 1 1 1) (0 0 1 1 0 0) (1 0 1 0 1 0) (0 0 1 1 0 0) (0 1 1 1 1 1))) 8 55 ((((0 0 0 1 0 0) (1 1 1 1 1 1) (1 1 1 1 1 0) (0 0 0 1 1 0) (0 0 0 1 1 0) (0 0 1 1 1 1) (0 0 1 1 1 1)) ((0 0 0 1 1 1) (1 1 1 1 1 1) (1 1 1 0 1 1) (0 0 1 1 0 0) (1 0 1 0 1 0) (0 0 1 1 0 0) (0 1 1 1 1 1))) 7 57 ((((0 0 0 1 0 0) (1 1 1 1 1 1) (1 1 1 1 1 0) (0 0 0 1 1 0) (0 0 0 1 1 0) (0 0 1 1 1 1) (0 0 1 1 1 1)) ((0 0 0 1 1 1) (1 1 1 1 1 1) (0 1 1 0 1 1) (0 0 1 1 0 0) (1 0 1 0 1 0) (0 0 1 1 0 0) (0 1 1 1 1 1))) 6 59 ((((0 0 0 1 0 0) (1 1 1 1 1 1) (1 1 1 1 1 0) (0 0 0 1 1 0) (0 0 0 1 1 0) (0 0 1 1 1 1) (0 0 1 1 1 1)) ((0 0 0 1 1 1) (1 1 1 0 1 1) (0 1 1 0 1 1) (0 0 1 1 0 0) (1 0 1 0 1 0) (0 0 1 1 0 0) (0 1 1 1 1 1))) 5 61 ((((0 0 0 1 0 0) (1 1 0 1 1 1) (1 1 1 1 1 0) (0 0 0 1 1 0) (0 0 0 1 1 0) (0 0 1 1 1 1) (0 0 1 1 1 1)) ((0 0 0 1 1 1) (1 1 1 0 1 1) (0 1 1 0 1 1) (0 0 1 1 0 0) (1 0 1 0 1 0) (0 0 1 1 0 0) (0 1 1 1 1 1))) 4 63 ((((0 0 0 1 0 0) (1 1 0 1 1 1) (1 1 1 1 1 0) (0 0 0 1 1 0) (0 0 0 1 1 0) (0 0 1 1 1 1) (0 0 1 1 1 1)) ((0 0 0 1 1 1) (1 1 0 0 1 1) (0 1 1 0 1 1) (0 0 1 1 0 0) (1 0 1 0 1 0) (0 0 1 1 0 0) (0 1 1 1 1 1))) 3 65 ((((0 0 0 1 0 0) (1 0 0 1 1 1) (1 1 1 1 1 0) (0 0 0 1 1 0) (0 0 0 1 1 0) (0 0 1 1 1 1) (0 0 1 1 1 1)) ((0 0 0 1 1 1) (1 1 0 0 1 1) (0 1 1 0 1 1) (0 0 1 1 0 0) (1 0 1 0 1 0) (0 0 1 1 0 0) (0 1 1 1 1 1))) 2 67 ((((0 0 0 1 0 0) (0 0 0 1 1 1) (1 1 1 1 1 0) (0 0 0 1 1 0) (0 0 0 1 1 0) (0 0 1 1 1 1) (0 0 1 1 1 1)) ((0 0 0 1 1 1) (1 1 0 0 1 1) (0 1 1 0 1 1) (0 0 1 1 0 0) (1 0 1 0 1 0) (0 0 1 1 0 0) (0 1 1 1 1 1))) 1 69 ((((0 0 0 1 0 0) (0 0 0 1 1 1) (1 1 1 1 1 0) (0 0 0 1 1 0) (0 0 0 1 1 0) (0 0 1 1 1 1) (0 0 1 1 1 1)) ((0 0 0 1 1 1) (0 1 0 0 1 1) (0 1 1 0 1 1) (0 0 1 1 0 0) (1 0 1 0 1 0) (0 0 1 1 0 0) (0 1 1 1 1 1))) 0 71 NIL))))))))))))))))))))))))) 690 24 24/691 0)
 ```
