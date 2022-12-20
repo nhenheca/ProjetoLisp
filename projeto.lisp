@@ -93,8 +93,8 @@
  (format t "Digite o algoritmo do tabuleiro indicados: ")
  (let ((op (read)))
   (cond
-   ((eq 2 op) (format t "~%Digite a profundidade: ")(dls (get-objective) (read) (operadores (get-cl))))
-   ((eq 1 op) (bfs (get-objective) (operadores (get-cl))))
+   ((eq 2 op) (format t "~%Digite a profundidade: ")(write-to-file (dls (get-objective) (read) (operadores (get-cl)))))
+   ((eq 1 op) (write-to-file (bfs (get-objective) (operadores (get-cl)))))
    ((eq 3 op) (menu-escolher-heuristica))
    ((eq 0 op) (menu-escolher-tabuleiro))
    (t (menu-escolher-algoritmo))
@@ -106,12 +106,17 @@
  (format t "Digite o algoritmo do tabuleiro indicados: ")
  (let ((op (read)))
   (cond
-   ((eq 1 op) (setq heuristicaop op)(a* (get-objective) (operadores (get-cl))))
-   ((eq 2 op) (setq heuristicaop op)(a* (get-objective) (operadores (get-cl))))
+   ((eq 1 op) (setq heuristicaop op)(write-to-file (a* (get-objective) (operadores (get-cl)))))
+   ((eq 2 op) (setq heuristicaop op)(write-to-file (a* (get-objective) (operadores (get-cl)))))
    ((eq 0 op) (menu-escolher-algoritmo))
    (t (menu-escolher-heuristica))
   )
  )
+)
+
+(defun write-to-file (params)
+ (with-open-file (str "C:/Users/nhenhecas/Documents/GitHub/ProjetoLisp/solucao.txt" :direction :output :if-exists :supersede :if-does-not-exist :create)
+  (format str "~a" params))
 )
 
 (defun get-objective ()
