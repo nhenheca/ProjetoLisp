@@ -142,10 +142,10 @@
  )
 )
 
-(defun heuristica (no &optional objective i)
+(defun heuristica (no &optional objective)
  (cond
-  ((equal i 1) (- objective (nCaixasFechadas no)))
-  ((equal i 2) (bom-vizinho no))
+  ((equal (get-heuristicaop) 1) (- objective (nCaixasFechadas no)))
+  ((equal (get-heuristicaop) 2) (bom-vizinho no))
  )
 )
 

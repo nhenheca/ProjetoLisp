@@ -1,5 +1,6 @@
 ;;NOVO
 (defun start ()
+ (setq heuristicaop 1)
  (menu-escolher-tabuleiro)
 )
 
@@ -74,15 +75,41 @@
  (ler-op-algoritmo)
 )
 
+(defun menu-escolher-heuristica ()
+ (format t "|-------------------------|~%")
+ (format t "|                         |~%")
+ (format t "|  ESCOLHA A HEURISTICA   |~%")
+ (format t "|                         |~%")
+ (format t "|       1 - DADA          |~%")
+ (format t "|       2 - GRUPO         |~%")
+ (format t "|                         |~%")
+ (format t "|       0 - Voltar        |~%")
+ (format t "|                         |~%")
+ (format t "|-------------------------|~%")
+ (ler-op-heuristica)
+)
+
 (defun ler-op-algoritmo ()
  (format t "Digite o algoritmo do tabuleiro indicados: ")
  (let ((op (read)))
   (cond
    ((eq 2 op) (format t "~%Digite a profundidade: ")(dls (get-objective) (read) (operadores (get-cl))))
    ((eq 1 op) (bfs (get-objective) (operadores (get-cl))))
-   ((eq 3 op) (a* (get-objective) (operadores (get-cl))))
+   ((eq 3 op) (menu-escolher-heuristica))
    ((eq 0 op) (menu-escolher-tabuleiro))
    (t (menu-escolher-algoritmo))
+  )
+ )
+)
+
+(defun ler-op-heuristica ()
+ (format t "Digite o algoritmo do tabuleiro indicados: ")
+ (let ((op (read)))
+  (cond
+   ((eq 1 op) (setq heuristicaop op)(a* (get-objective) (operadores (get-cl))))
+   ((eq 2 op) (setq heuristicaop op)(a* (get-objective) (operadores (get-cl))))
+   ((eq 0 op) (menu-escolher-algoritmo))
+   (t (menu-escolher-heuristica))
   )
  )
 )
@@ -97,4 +124,8 @@
 
 (defun get-cl ()
  (length (caar problema))
+)
+
+(defun get-heuristicaop ()
+ heuristicaop
 )

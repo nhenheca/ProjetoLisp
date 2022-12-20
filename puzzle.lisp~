@@ -2,7 +2,7 @@
 
 ;;;Retorna um tabuleiro 3x3 (3 arcos na vertical por 3 arcos na horizontal) Profundidade Heuristica Pai"
 (defun no-teste ()
- (list (tabuleiro-teste) 0 (heuristica (list (tabuleiro-teste) 0 0 nil) (get-cl) (get-objective)) nil)
+ (list (tabuleiro-teste) 0 (heuristica (list (tabuleiro-teste) 0 0 nil) (get-objective)) nil)
 )
 
 ;;;Seleciona dentro do no o tabuleiro
@@ -10,20 +10,20 @@
  (car no)
 )
 
-(defun no-profundidade (no-teste)
- (second no-teste)
+(defun no-profundidade (no)
+ (second no)
 )
 
-(defun no-pai (no-teste)
- (fourth no-teste)
+(defun no-pai (no)
+ (fourth no)
 )
 
-(defun no-heuristica (no-teste)
- (third no-teste)
+(defun no-heuristica (no)
+ (third no)
 )
 
-(defun no-custo(no-teste)
-  (+ (no-profundidade no-teste) (no-heuristica no-teste))
+(defun no-custo(no)
+  (+ (no-profundidade no) (no-heuristica no))
 )
 
 ;;;Construtor
@@ -47,9 +47,7 @@
  "Retorna um tabuleiro 3x3 (3 arcos na vertical por 3 arcos na horizontal)"
 
 (defun tabuleiro-teste ()
- (with-open-file (stream "C:/Users/nhenhecas/Documents/GitHub/ProjetoLisp/memoria.pt" :direction :input) 
-  (car (read stream))
- )
+ (get-tabuleiro)
 )
 
 ;;; SELETORES ;;;
@@ -116,7 +114,7 @@
 )
 
 ;;;Devolve a lista de operadores
-(defun operadores (&optional (cl (length (car (no-estado (no-teste))))) (pos 1) (i 1))
+(defun operadores (cl &optional (pos 1) (i 1))
  (cond
   ((equal pos (+ 1 cl)) nil)
   ((not (equal cl i)) (append (list(list 'arco-vertical pos i '(get-arcos-horizontais ))) (list(list 'arco-horizontal pos i '(get-arcos-verticais ))) (operadores cl pos (+ i 1))) )
@@ -125,7 +123,7 @@
 )
 
 ;;(get-arco-na-posicao 2 3 (get-arcos-horizontais (no-teste)))
-(defun nCaixasFechadas (no &optional (cl (length (car (no-estado (no-teste))))) (iL 1)(posL 1)(iC 1)(posC 1)(caixas 0)(itNumber 1))
+(defun nCaixasFechadas (no &optional (cl (length (car (no-estado no)))) (iL 1)(posL 1)(iC 1)(posC 1)(caixas 0)(itNumber 1))
  (cond
   ((equal itNumber cl) caixas)
   ((equal cl posC) (nCaixasFechadas no cl 1 (+ posL 1) (+ iC 1) 1 caixas (+ itNumber 1)))
@@ -134,39 +132,26 @@
  )
 )
 
-(defun nCaixasAbertas (no &optional (cl (length (car (no-estado no)))) (iL 1)(posL 1)(iC 1)(posC 1)(caixas 0)(itNumber 1))
+;;(get-arco-na-posicao 2 3 (get-arcos-horizontais (no-teste)))
+(defun bom-vizinho (no &optional (cl (length (car (no-estado no)))) (iL 1)(posL 1)(iC 1)(posC 1)(soma 0)(itNumber 1))
  (cond
-  ((equal itNumber cl) caixas)
-  ((equal cl posC) (nCaixasAbertas no cl 1 (+ posL 1) (+ iC 1) 1 caixas (+ itNumber 1)))
-  ((equal 3 (+ (get-arco-na-posicao posL iL (get-arcos-horizontais no))(get-arco-na-posicao (+ 1 posL) iL (get-arcos-horizontais no))(get-arco-na-posicao posC iC (get-arcos-verticais no))(get-arco-na-posicao (+ 1 posC) iC (get-arcos-verticais no)))) (nCaixasAbertas no cl (+ iL 1) posL iC (+ posC 1)(+ caixas 1) itNumber))
-  ((not (equal 3 (+ (get-arco-na-posicao posL iL (get-arcos-horizontais no))(get-arco-na-posicao (+ 1 posL) iL (get-arcos-horizontais no))(get-arco-na-posicao posC iC (get-arcos-verticais no))(get-arco-na-posicao (+ 1 posC) iC (get-arcos-verticais no))))) (nCaixasAbertas no cl (+ iL 1) posL iC (+ posC 1) caixas itNumber))
+  ((equal itNumber cl) soma)
+  ((equal cl posC) (bom-vizinho no cl 1 (+ posL 1) (+ iC 1) 1 soma (+ itNumber 1)))
+  ((equal nil (remove nil (list (get-arco-na-posicao posL iL (get-arcos-horizontais no))(get-arco-na-posicao (+ 1 posL) iL (get-arcos-horizontais no))(get-arco-na-posicao posC iC (get-arcos-verticais no))(get-arco-na-posicao (+ 1 posC) iC (get-arcos-verticais no))))) (bom-vizinho no cl (+ iL 1) posL iC (+ posC 1)(+ soma 4) itNumber))
+  (t (bom-vizinho no cl (+ iL 1) posL iC (+ posC 1)  (+ soma (- 4 (apply '+ (remove nil (list (get-arco-na-posicao posL iL (get-arcos-horizontais no))(get-arco-na-posicao (+ 1 posL) iL (get-arcos-horizontais no))(get-arco-na-posicao posC iC (get-arcos-verticais no))(get-arco-na-posicao (+ 1 posC) iC (get-arcos-verticais no))))))) itNumber))
  )
 )
 
-(defun heuristica (no objective &optional (cl (length (car (no-estado no)))))
- (- objective (nCaixasFechadas no cl))
-)
-
-(defun minha-heuristica (no objective &optional (cl (length (car (no-estado no)))))
- (- objective (nCaixasFechadas no cl))
+(defun heuristica (no &optional objective)
+ (cond
+  ((equal i 1) (- objective (nCaixasFechadas no)))
+  ((equal i 2) (bom-vizinho no))
+ )
 )
 
 (defun no-objetivop (no objetivo &optional (cl (length (car (no-estado no)))))
  (cond
   ((equal objetivo (nCaixasFechadas no cl)) T)
   (t nil)
- )
- 
-)
-
-(defun get-cl ()
- (with-open-file (stream "C:/Users/nhenhecas/Documents/GitHub/ProjetoLisp/memoria.pt" :direction :input) 
-  (length (caar (read stream)))
- )
-)
-
-(defun get-objective ()
- (with-open-file (stream "C:/Users/nhenhecas/Documents/GitHub/ProjetoLisp/memoria.pt" :direction :input) 
-  (second (read stream))
  )
 )
