@@ -16,16 +16,14 @@ João Marques - 202000432
 
 Gabriel Garcia - 
 
-21 de Dezembro de 2019
-
 # Indice 
 
 1. Introdução
 2. Arquitetura do Sistema
 3. Entidades e sua implementação
 4. Algoritmos e sua implementação
-5. Resultados
-6. Limitações técnicas e ideias para desenvolvimento futuro
+5. Limitações técnicas
+6. Resultados
 
 # Introdução
 
@@ -252,7 +250,7 @@ A nossa implementação do algoritmo inves de ordenar-nos e carregar o de menor 
   ```
 
 ### Heurística
-A procurar por heurística permite realizar a pesquisa por meio da quantificação de proximidade de um determinado objetivo, neste projeto iremos utlizar heurística para encontrarmos as possiveis soluções consoante os objetivos de cada tabuleiro. 
+A heuristica permite aumentar a eficacia/eficiencia do algoritmo A*, uma boa heuristica produz resultados melhor.
 
 ```LISP
     (LET ((heuristica))
@@ -301,75 +299,70 @@ Para poder comparar a eficácia dos 4 algoritmos funcionais foi feito uma tabela
 
 ## BFS (Breadth First Search)
 
-| Problema         | Nós Gerados   | Nós Expandidos | *g(x)*   Profundidade  |Penetrância|Points|ABF
-| --------- | :-------:|:--------:|:-------:| :---------:| :---------:| :--------:|
-| A |   12   |  7    |  2    | 0.16666667   |49 |1.198952
-| B |   30   |  13   |  1    | 0.033333335  |21 |1.4831691
-| C |   12   |  2    |  0    | 0.0          |12 |1.198952
-| D |   55   |  15   |  1    | 0.018181818  |97 |1.7105427
-| E |   37   |  12   |  2    | 0.054054056  |56 |1.5400125
-| F |  16938 |  2191 |  4    | 0.00023615539|282|4.893774
+| Problema         | Nós Gerados   | Nós Expandidos | *g(x)*   Profundidade  |Penetrância|Execução em segundos
+| --------- | :-------:|:--------:|:-------:| :---------:| :---------:| 
+| A |   137  |  9    |  2    | 10/137       |0 
+| B |   ~12   |  0   |   1   | ~1/12        |0 
+| C |   Memory Bound   |  Memory Bound    |  Memory Bound    | Memory Bound          |Memory Bound
+| D |   Memory Bound   |  Memory Bound    |  Memory Bound    | Memory Bound          |Memory Bound
+| E |   Memory Bound   |  Memory Bound    |  Memory Bound    | Memory Bound          |Memory Bound
+| F |   Memory Bound   |  Memory Bound    |  Memory Bound    | Memory Bound          |Memory Bound
 
 
 
 ## DFS (Depth-first search)
-*(Usando uma profundidade de 35)*
+*(Usando uma profundidade de 5)*
 
-| Problema      | Nós Gerados   | Nós Expandidos | Profundidade *g(x)* | Penetrância|Points|ABF|Runtime
-| ------------- |:-------------:| :------------:|:--------------:|:------------:| :---------:| :---------:|:---------:|  
-| A  |   6   |  4   |  2    |  0.33333334  | 49| 1.0284217 | 0.001
-| B  |   15   |  11    |  9    |  0.6   | 65| 1.2557953| 0.001
-| C  |   11   |  5    |  3    |  0.27272728   | 154| 1.198952|0.001
-| D  |   16    |  4    |  1    |  0.125     | 186| 1.3126388| 0.003|
-| E  |   27  |  14   |  12   |  0.44444445  | 186| 1.4263256| 0.015|
-| F  |   124   |  37   |  35   | 0.28225806 | 1975| 1.9947598| 0.022|
+| Problema         | Nós Gerados   | Nós Expandidos | *g(x)*   Profundidade  |Penetrância|Execução em segundos
+| --------- | :-------:|:--------:|:-------:| :---------:| :---------:| 
+| A |   62  |  4    |  2    | 5/62      |0 
+| B |   ~12   |  0   |   1   | ~1/12        |0 
+| C |   Memory Bound   |  Memory Bound    |  Memory Bound    | Memory Bound          |Memory Bound
+| D |   Memory Bound   |  Memory Bound    |  Memory Bound    | Memory Bound          |Memory Bound
+| E |   Memory Bound   |  Memory Bound    |  Memory Bound    | Memory Bound          |Memory Bound
+| F |   Memory Bound   |  Memory Bound    |  Memory Bound    | Memory Bound          |Memory Bound
 
 
 ## A* (A* Search Algorithm)
+*(Usando heuristica base)*
 
+| Problema         | Nós Gerados   | Nós Expandidos | *g(x)*   Profundidade  |Penetrância| Execução em segundos
+| --------- | :-------:|:--------:|:-------:| :---------:| :---------:| 
+| A |   16  |  2    |  2    | 2/17       |0 
+| B |   1   |  1   |   1   | 1        |0 
+| C |   Memory Bound   |  Memory Bound    |  Memory Bound    | Memory Bound          |Memory Bound
+| D |   Memory Bound   |  Memory Bound    |  Memory Bound    | Memory Bound          |Memory Bound
+| E |   Memory Bound   |  Memory Bound    |  Memory Bound    | Memory Bound          |Memory Bound
+| F |   Memory Bound   |  Memory Bound    |  Memory Bound    | Memory Bound          |Memory Bound
 
-| Problema      |    Nós Gerados   | Nós Expandidos | Profundidade *g(x)*  | Heuristíca *h(x)*| Penetrância|Points|ABF
-| ---------- |:-------------:| :------------:|:--------------:|:------------:| :---------:| :---------:| :---------:| 
-| A  |   8    |  6    |  2    | *h(x)=o(x)/m(x)* 1.5681818   |0.25|49|1.0852652
-| B  |   15   |  7    |  1    |  *h(x)=o(x)/m(x)* 8.181818  |0.06666667| 21|1.2557953
-| C  |   8    |  3    |  0    |  *h(x)=o(x)/m(x)* 0|0.0|12|1.0852652
-| D  |   34   |  14   |  3    |  *h(x)=o(x)/m(x)* 8.988086|0.0882353| 197|1.5400125
-| E  |   28   |  16   |  12   |  *h(x)=o(x)/m(x)* 9.593023 |0.42857143|226|1.4831691
-| F  |   150  |  45   |  34   |  *h(x)=o(x)/m(x)* 5.263158 |0.22666668|1796|2.0516033
+## A* (A* Search Algorithm)
+*(Usando heuristica criada)*
 
-## SMA* (Simplified Memory Bounded A* Search Algorithm)
-
-*(Usando como maximo de Memoria 4 Nós)*
-
-| Problema      |    Nós Gerados   | Nós Expandidos | Profundidade *g(x)*  | Heuristíca *h(x)*| Penetrância|Points|ABF
-| ---------- |:-------------:| :------------:|:--------------:|:------------:| :---------:| :---------:| :---------:| 
-| A  |   8    |  6    |  2    |  1.5681818  | 0.25|49|1.0852652
-| B  |   15   |  7    |  1    |  *h(x)=o(x)/m(x)* 8.181818  |0.06666667| 21|1.2557953
-| C  |   8    |  3    |  0    |  *h(x)=o(x)/m(x)* 0|0.0|12|1.0852652
-| D  |   34   |  14   |  3    |  *h(x)=o(x)/m(x)* 8.988086|0.0882353| 197|1.5400125
-| E  |   28   |  16   |  12   |  *h(x)=o(x)/m(x)* 9.593023 |0.42857143|226|1.4831691
-| F  |   150   |  43   |  32   |  9.51555 |0.21333334|1630|2.0516033
-
-
-
-
-
+| Problema         | Nós Gerados   | Nós Expandidos | *g(x)*   Profundidade  |Penetrância|Execução em segundos
+| --------- | :-------:|:--------:|:-------:| :---------:| :---------:| 
+| A |   45  |  4    |  4    | 2/23      |0 
+| B |   1   |  1   |   1   | 1       |0 
+| C |   126   |  10   |  10    | 10/127          | 0
+| D |   Memory Bound   |  Memory Bound    |  Memory Bound    | Memory Bound          |Memory Bound
+| E |   690   |  24    |  24    | 24/691          |0
+| F |   Memory Bound   |  Memory Bound    |  Memory Bound    | Memory Bound          |Memory Bound
+---
+---
+<br>
 
 # Projeto Nº1: Época Normal 
-
 
 
 ![alt text](/Manuais/img/ips_logo.png?sanitize=true "IPS logo")
 
 
-
-## Inteligência Artificial 19/20
+## Inteligência Artificial 22/23
 Prof. Joaquim Filipe
 
 Eng. Filipe Mariano
 
 
-# Jogo do Cavalo (Knight Game)
+# Jogo Dots and Boxes
 
 
 ## Manual de Utilizador
@@ -377,14 +370,11 @@ Eng. Filipe Mariano
 
 Realizado por:
 
-João Gomes - 150221001
+Miguel Rodrigues - 202001391
 
-André Gastão - 130221037
+João Marques - 202000432
 
-21 de Dezembro de 2019
-
-
-
+Gabriel Garcia - 
 
 # Indice
 
@@ -397,299 +387,132 @@ André Gastão - 130221037
 
 # Introdução
 
-Este documento é escrito recorrendo á linguagem de marcação markdown, serve como relatório do Manual de Utilizador do projeto Jogo do Cavalo (Knight Game).
-
-No âmbito da unidade curricular de Inteligência Artificial, foi nos proposto o projecto do jogo (Knight Game) originalmente criado a partir do problema matemático estudado em Inteligencia Artificial Knight's tour.
-Neste documento serão descritos todos os passos para que o utilizador consiga instalar e  interagir com a aplicação do jogo.
+Este documento servirá de manual de utilizador, guiará a instalação de todo o software necessario e de como utiliza-lo.
 
 
 
 # Instalação
 
-A aplicação neçessita da instalação do IDE LispWorks.
+É necessaio instalar um compilador de LISP e o respetivo editor, recomendamos o LispWorks.
 
-LispWorks é uma Plataforma integrada que serve como ferramenta de desenvolvimento para Common Lisp.
-Poderá adquirir o PersonalEdition e fazer o seu download  [aqui](http://www.lispworks.com/products/lispworks.html)
+Lispworks é uma Integrated cross-platform development tool for Common Lisp  [aqui](http://www.lispworks.com/products/lispworks.html)
 
-![alt text](/Manuais/img/lispworks.png?sanitize=true "LispWorks")
-
-O sistema do Jogo do Cavalo foi implementado em linguagem LISP e foi desenvolvido com auxilio do IDE LispWorks. A estrutura do projeto é composta por 4 ficheiros:
+A estrutura do projeto está organizada em 5 ficheiros:
 
 - projeto.lisp - Interação com o utilizador, escrita e leitura de ficheiros.
 - puzzle.lisp - Implementação da resolução do problema incluindo seletores, operadores heuristicas e outras funcõess auxiliares.
 - procura.lisp - Implementação dos algoritmos de procura BFS, DFS e A*.
-- problemas.dat - Funções com os problemas de A) a f).
+- problemas.dat - Tabuleiros representantes do problema.
+- solucao.txt - A solução ao problema dado mais os seus dados estatisticos.
 
 
 # Configuração
 
- Visto que a estrutura do projeto é composta por 4 ficheiros distintos, para cada maquina temos de configurar o path ou o caminho da diretória desses ficheiros então a alteração a realizar deverá alterar o *Path* no ficheiro Projeto.Lisp
+É necessario alterar a diretoria do projeto nas seguintes funções contidas em projeto.lisp:
 
 ```Lisp
-(defun diretoria-atual ()
-"Define o caminho até ficheiros do projeto do root"
-  (let ((path "C:\\Path Of Folder\\"))
-    path
-  )
+(defun get-number-of-lines ()
+ (with-open-file (stream "C:/Users/nhenhecas/Documents/GitHub/ProjetoLisp/problem.dat" :direction :input) 
+  (get-number-of-lines-aux stream) 
+ )
 )
 
-(defun ficheiro-solucao ()
-(let ((ficheiro-path  "C:\\Path Of Folder\\solucao.dat"))
-    ficheiro-path
-  )
+(defun my-get-tab (i)
+ (with-open-file (stream "C:/Users/nhenhecas/Documents/GitHub/ProjetoLisp/problem.dat" :direction :input) 
+  (tab stream i) 
+ )
 )
 
+(defun write-to-file (params)
+ (with-open-file (str "C:/Users/nhenhecas/Documents/GitHub/ProjetoLisp/solucao.txt" :direction :output :if-exists :supersede :if-does-not-exist :create)
+  (format str "~a" params))
+)
 ```
 
-Após a configuração do path temos entao de abrir o Lisp Works, de seguida abrir o ficheiro Projeto.Lisp e Compilar o mesmo.
-
-![awkward effect](Manuais/img/LispWork_Gif.gif?sanitize=true "Gif")
+Após as funções alteradas deverá abrir os ficheiros puzzle.lisp, projeto.lisp, procura.lisp e compilar cada um deles.
 
 
 # Interface da Aplicação
 
-Com a instalação e a configuração dos ficheiros Podemos assim correr a aplicação:
+## Escolher tabuleiro
 
-- [x] Instalação
-- [x] Configuração
-- [ ] xecutar
-
-
-Devido a consola não ser *Responsive* aconselha-se á maximização da janela do listener para ter uma melhor experiência de vizualização
-# Home Menu
-
-o menu principal mostra as opções do jogo, para qual o utilizador pode 
-escolher uma das três opções para jogar e a opção quatro serve para sair 
-do programa
+No menu princial terá a hipotese de escolher um dos tabuleiros contidos em problema.dat
 ```
-      
-      ______________________________________________________
-      §                  JOGO DO CAVALO                      §
-      §                  •(Knight Game) •                    §
-      §                                                      §
-      §                                                      §
-      §                                                      §
-      §                 1-Solve a Game                       §
-      §                 2-Game Rules                         §
-      §                 3-Show Boards                        §
-      §                 4-Quit                               §
-      §                                                      §
-      §______________________________________________________§
-
-      Option ->
+|-------------------------|
+|                         |
+|   ESCOLHA O TABULEIRO   |
+|                         |
+|    6 - Tabuleiro 6      |
+|    5 - Tabuleiro 5      |
+|    4 - Tabuleiro 4      |
+|    3 - Tabuleiro 3      |
+|    2 - Tabuleiro 2      |
+|    1 - Tabuleiro 1      |
+|                         |
+|-------------------------|
+Digite o numero do tabuleiro indicados:
 ```
-# Solve a Game 
-A opção solve a game ou resolver o jogo permite mostrar o menu dos problemas de A a F,
-em que o utilizador deve escolher a opção 1 e carregar na tecla enter.
-
-O novo menu mostra 6 opções dos problemas, na qual o utilizador pode escolher uma das 6 opções e sendo a setima (7) opção permite a saida do programa principal.
+## Escolher algoritmo 
+Neste menu terá a hipotese de escolher o algotitmo a aplicar a um dos tabuleiros contidos em problema.dat escolhido anteriormente.
 
 ```
-       ______________________________________________________
-      §                CHOOSE THE BOARD                      §
-      §                                                      §
-      §                 1-Problem A                          §
-      §                 2-Problem B                          §
-      §                 3-Problem C                          §
-      §                 4-Problem D                          §
-      §                 5-Problem E                          §
-      §                 6-Problem F                          §
-      §                 7-Home Menu                          §
-      §                                                      §
-      §______________________________________________________§
-
-      Option ->
-```
-## Solve Board
-
-### Choose The Problem 
-As opções problema A) à F), o utilizador pode escolher um dos problemas para que possa
-obter uma solução e atingir o objetivo.
-```
- ______________________________________________________
-§                CHOOSE THE BOARD                      §
-§                                                      §
-§                 1-Problem A                          §
-§                 2-Problem B                          §
-§                 3-Problem C                          §
-§                 4-Problem D                          §
-§                 5-Problem E                          §
-§                 6-Problem F                          §
-§                 7-Home Menu                          §
-§                                                      §
-§______________________________________________________§
-
-Option -> 
-```
-Neste Menu o utilizador pode escolher correr logo o Algoritmo ou colocar manualmente o cavalo em Jogo e Proceder á Procura da Solução.
-```
-______________________________________________________
-§                                                      §
-§                    • GAME MODES •                    §
-§                                                      §
-§                                                      §
-§                 1-GO TO ALGORITHM                    §
-§                 2-CONFIGURE BOARD                    §
-§                                                      §
-§                 0-Home Menu                          §
-§                                                      §
-§______________________________________________________§ 
-
-Option ->
-```
-### Choose The Search Algorithm 
- Este menu permite escolher um dos algoritmos BFS,DFS e A*  implementados para obter o resultado de um problema proposto
-```
-          ______________________________________________________
-          §                                                      §
-          §                  CHOOSE ALGORITHM                    §
-          §                (search algorithm)                    §
-          §                                                      §
-          §                 1-Algorithm BFS                      §
-          §                 2-Algorithm DFS                      §
-          §                 3-Algorithm A*                       §
-          §                 4-Algorithm SMA*                     §
-          §                 0-Home Menu                          §
-          §                                                      §
-          §______________________________________________________§
-
-Option -> 
-```
-- ### BFS (Breadth First Search)
-
-BFS ou opção 1, ao escolher este algoritmo o sistema irá resolver o problema escolhido.
-
-
-
-- ### DFS (Depth First Search)
-
-DFS ou opção 2: se utilizador optar por escolher o algoritmo DFS, terá de inserir em primeiro
-o valor da profundidade para obter a solucão do problema escolhido.
-
-
-- ### A* 
-
-A* ou opção 3 do menu algoritmos, o utiliador pode escolher a opção 3 , onde o problema é resolvido atraves de heuritica, baseando nas formulas fornecidas pelo enunciado.
-o menu heuristica permite que o utilizador escolha uma das duas opções a seguir.
-
-```
- ______________________________________________________
-§                          H                           §
-§                     (HEURISTIC)                      §
-§                                                      §
-§                 1-Base (h(x)=o(x)/m(x))              §
-§                 2-Base                               §    
-§                 0-Home Menu                          §
-§                                                      §
-§______________________________________________________§
-
-Heuristic -›
-```
-Os resultados obtidos ao escolher o algoritmo A*, com a base da opção 1
-
-O algoritmo A* com a base da opção 1 mostra os resultados na secção A* output, em que as estatisticas correspondem aos seguintes valores:
-G (Profundidade): 2, H (Heuristica): 1.568, tamanho da solução: 6,
-Nós gerados: 8, Nós expandidos: 6, Penetração: 0.25, Pointos: 49
-Objetivos: 70, Fator de ramificação: 1.085
-
-- ### Outros resultados
-
-# Game Rules 
-o menu game rules mostra a descrição do jogo e suas regras
-para que o utilizador possa compreender sobre o jogo antes de o iniciar.
-```
-___________________________   GAME RULES   ____________________________
-                            (Knight Game)                  
-     1- Esta versão do jogo consiste num tabuleiro 
-        com 10 linhas e 10 colunas (10X10)
-     2- Em que cada casa possui uma pontuação com valor entre 00 e 99 
-        (Aleatório),sem repetição nas celulas do tabuleiro.
-     3- O objectivo do jogo é acumular mais pontos que o adversário,
-         usando um cavalo de xadrez.
-        Cada jogador tem um cavalo da sua cor (branco ou preto).
-     4- Todas as jogadas seguintes são efectuadas através de um movimento de cavalo
-        (usando as regras tradicionais do Xadrez para o cavalo).
-        Um cavalo não pode saltar para uma casa vazia (sem número)
-        e também não pode fazê-lo para uma casa que esteja ameaçada pelo cavalo adversário.  
-     5- O jogo termina quando não for possível movimentar 
-        qualquer um dos cavalos no tabuleiro,
-        sendo o vencedor o jogador que ganhou mais pontos.
-________________________________________________________________________
-```
-# Show Boards
-Nesta opção o utilizador pode visualizar a lista dos problemas, em que cada um dos problemas pode ser resolvido. 
-- ### List of Boards
-
-```
- ______________________________________________________
-§              • CHOOSE THE BOARD •
-§                                                      §
-§                 1-Problem A                          §
-§                 2-Problem B                          §
-§                 3-Problem C                          §
-§                 4-Problem D                          §
-§                 5-Problem E                          §
-§                 6-Problem F                          §
-§                 7-Home Menu                          §
-§                                                      §
-§______________________________________________________§
-
-Option ->
-
+|-------------------------|
+|                         |
+|   ESCOLHA O ALGORITMO   |
+|                         |
+|       1 - BFS           |
+|       2 - DLS           |
+|       3 - A*            |
+|                         |
+|       0 - Voltar        |
+|                         |
+|-------------------------|
+Digite o algoritmo do tabuleiro indicados: 
 ```
 
+### Escolher algoritmo DLS
 
-# QUIT 
-O menu que permite ao utilizador sair do programa, sem ter a necessidade de realizar o jogo até  o fim ou atingir um dado objetivo.
+```
+|-------------------------|
+|                         |
+|   ESCOLHA O ALGORITMO   |
+|                         |
+|       1 - BFS           |
+|       2 - DLS           |
+|       3 - A*            |
+|                         |
+|       0 - Voltar        |
+|                         |
+|-------------------------|
+Digite o algoritmo do tabuleiro indicados: 2
 
-O utilizador pode efectuar a paragem do jogo, usando a opção 4 do menu principal do jogo do cavalo como mostra abaixo.
-
-
-
+Digite a profundidade:
+```
+## Escolher heuristica
+Neste menu terá a hipotese de escolher a heuristica a aplicar a um dos tabuleiros contidos em problema.dat escolhido anteriormente.
+```
+|-------------------------|
+|                         |
+|  ESCOLHA A HEURISTICA   |
+|                         |
+|       1 - DADA          |
+|       2 - GRUPO         |
+|                         |
+|       0 - Voltar        |
+|                         |
+|-------------------------|
+Digite a heuristica desejada:
+```
 # Output
 
 ## CONSOLE OUTPUT
-O output de console é o resultado obtido atraves do tabuleiro criado e dos algoritmos BFS, DFS, A* 
+O output da consela é nil, informa que o algoritmo correu com sucesso até ao nó objetivo. 
 
 
 ## FILE OUTPUT
- O output do ficheiro é o resultado obtido através dos algoritmos implementados
-  e são visualizdos no output console e no ficheiro de solução.dat,
-  exemplo dos resultados obtidos no ficheiro solução segundo o diretoria: 
+ O output do ficheiro será uma lista constituida pelo nó objetivo, profundidade, numero total de nós gerados, numero de nós expandidos, penetração e tempo de execução.
 
 ```
-"C:\\Users\\andre.gastao\\Documents\\IA1920\\Projecto\\Projecto_2019_2020_IA_PreFinal\\Projecto_2019_2020_IA\\Projecto\\solucao.dat"
-
-```
-```
-______________STATS______________ 
-
- _______  16:02:00 of Saturday, 12/21/2019 (GMT+0)  _______ 
 
 
- Final State: 
-
-((NIL NIL T NIL NIL NIL NIL NIL NIL NIL)
- (NIL NIL NIL NIL NIL NIL NIL NIL NIL NIL)
- (NIL NIL NIL NIL NIL NIL NIL NIL NIL NIL)
- (NIL NIL NIL NIL NIL NIL NIL NIL NIL NIL)
- (NIL NIL NIL 22 NIL NIL NIL NIL NIL NIL)
- (NIL NIL NIL NIL NIL NIL NIL NIL NIL NIL)
- (NIL NIL NIL NIL NIL NIL NIL NIL NIL NIL)
- (NIL NIL NIL NIL NIL NIL NIL NIL NIL NIL)
- (NIL NIL NIL NIL NIL NIL NIL NIL NIL NIL)
- (NIL NIL NIL NIL NIL NIL NIL NIL NIL NIL))
- ___________________________________
-
-          Algorithm: BFS 
-          G (Depth): 2 
-          H (Heuristic): 0
-          Solution Length: 6
-          Generated Nodes: 12
-          Expanded Nodes: 7
-          Penetration: 0.16666667
-          Points: 49
-          Objective: 70
-          Average branching factor: 1.198952
-          OBJECTIVE NOT REACHED  
 ```

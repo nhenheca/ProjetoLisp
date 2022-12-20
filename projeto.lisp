@@ -103,7 +103,7 @@
 )
 
 (defun ler-op-heuristica ()
- (format t "Digite o algoritmo do tabuleiro indicados: ")
+ (format t "Digite a heuristica desejada: ")
  (let ((op (read)))
   (cond
    ((eq 1 op) (setq heuristicaop op)(write-to-file (a* (get-objective) (operadores (get-cl)))))
