@@ -5,52 +5,35 @@
  (list (tabuleiro-teste) 0 (heuristica (list (tabuleiro-teste) 0 0 nil) (get-objective)) nil)
 )
 
+;;;#########################################################################################################
+;;;SELETORES ###############################################################################################
+;;;#########################################################################################################
+
 ;;;Seleciona dentro do no o tabuleiro
 (defun no-estado (no)
  (car no)
 )
 
+;;;Seleciona dentro do no o profundidade
 (defun no-profundidade (no)
  (second no)
 )
 
+;;;Seleciona dentro do no o pai
 (defun no-pai (no)
  (fourth no)
 )
 
+;;;Seleciona dentro do no o heuristica
 (defun no-heuristica (no)
  (third no)
 )
 
+;;;Seleciona dentro do no o custo
 (defun no-custo(no)
   (+ (no-profundidade no) (no-heuristica no))
 )
 
-;;;Construtor
-(defun cria-no (tabuleiro g h pai)
- (list tabuleiro g h pai)
-)
-
-(defun novo-sucessor (pai op)
- (cond
-  ((equal nil (funcall (first op) pai (second op) (third op) (funcall (car (fourth op)) pai))) nil)
-  (t (cria-no (funcall (first op) pai (second op) (third op) (funcall (car (fourth op)) pai)) (+ 1 (no-profundidade pai)) (heuristica (list (funcall (first op) pai (second op) (third op) (funcall (car (fourth op)) pai))) (get-objective))  pai))
- )
-)
-
-(defun sucessores (no opsList)
- (remove nil (mapcar #'(lambda (op) (novo-sucessor no op)) opsList))
-)
-;;;MIGUEL GABRIEL MARQUES #########################################################
-
-;;; Tabuleiro
- "Retorna um tabuleiro 3x3 (3 arcos na vertical por 3 arcos na horizontal)"
-
-(defun tabuleiro-teste ()
- (get-tabuleiro)
-)
-
-;;; SELETORES ;;;
 ;;;(get-arcos-horizontais (no-teste))
 ;;;((0 0 0) (0 0 1) (0 1 1) (0 0 1))
 (defun get-arcos-horizontais(no)
@@ -67,6 +50,50 @@
 ;;1
 (defun get-arco-na-posicao (x y l)
  (nth (- y 1)(nth (- x 1) l))
+)
+
+;;;#########################################################################################################
+;;;SELETORES ###############################################################################################
+;;;#########################################################################################################
+
+;;;#########################################################################################################
+;;;SUCESSORES ##############################################################################################
+;;;#########################################################################################################
+
+;;;Construtor
+(defun cria-no (tabuleiro g h pai)
+ (list tabuleiro g h pai)
+)
+
+(defun novo-sucessor (pai op)
+ (cond
+  ((equal nil (funcall (first op) pai (second op) (third op) (funcall (car (fourth op)) pai))) nil)
+  (t (cria-no (funcall (first op) pai (second op) (third op) (funcall (car (fourth op)) pai)) (+ 1 (no-profundidade pai)) (heuristica (list (funcall (first op) pai (second op) (third op) (funcall (car (fourth op)) pai))) (get-objective))  pai))
+ )
+)
+
+(defun sucessores (no opsList)
+ (remove nil (mapcar #'(lambda (op) (novo-sucessor no op)) opsList))
+)
+
+;;;#########################################################################################################
+;;;SUCESSORES ##############################################################################################
+;;;#########################################################################################################
+
+;;;#########################################################################################################
+;;;AUXILIARES ##############################################################################################
+;;;#########################################################################################################
+
+;;; Tabuleiro
+(defun tabuleiro-teste ()
+ (get-tabuleiro)
+)
+
+(defun no-objetivop (no objetivo &optional (cl (length (car (no-estado no)))))
+ (cond
+  ((equal objetivo (nCaixasFechadas no cl)) T)
+  (t nil)
+ )
 )
 
 ;;; AUXILIARES ;;;
@@ -92,7 +119,14 @@
  )
 )
 
-;;; OPERADORES ;;;
+;;;#########################################################################################################
+;;;AUXILIARES ##############################################################################################
+;;;#########################################################################################################
+
+;;;#########################################################################################################
+;;;OPERADORES ##############################################################################################
+;;;#########################################################################################################
+
 ;;;(arco-horizontal 3 1 (get-arcos-verticais (no-teste)))
 ;;;((0 0 0) (0 0 1) (1 1 1) (0 0 1) (0 0 0) (0 1 1) (1 0 1) (0 1 1))
 (defun arco-horizontal (no pos i l &optional (z 1))
@@ -122,6 +156,14 @@
  )
 )
 
+;;;#########################################################################################################
+;;;OPERADORES ##############################################################################################
+;;;#########################################################################################################
+
+;;;#########################################################################################################
+;;; HEURISTICA E AUXILIARES ################################################################################
+;;;#########################################################################################################
+
 ;;(get-arco-na-posicao 2 3 (get-arcos-horizontais (no-teste)))
 (defun nCaixasFechadas (no &optional (cl (length (car (no-estado no)))) (iL 1)(posL 1)(iC 1)(posC 1)(caixas 0)(itNumber 1))
  (cond
@@ -149,9 +191,6 @@
  )
 )
 
-(defun no-objetivop (no objetivo &optional (cl (length (car (no-estado no)))))
- (cond
-  ((equal objetivo (nCaixasFechadas no cl)) T)
-  (t nil)
- )
-)
+;;;#########################################################################################################
+;;; HEURISTICA E AUXILIARES ################################################################################
+;;;#########################################################################################################
