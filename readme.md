@@ -14,7 +14,7 @@ Miguel Rodrigues - 202001391
 
 João Marques - 202000432
 
-Gabriel Garcia - 
+Gabriel Garcia - 202002361
 
 # Indice 
 
@@ -177,12 +177,13 @@ Na teoria dos grafos, busca em largura é um algoritmo de busca em grafos utiliz
 
 
 ```Lisp
+;;; ImplementaÃ§Ã£o do BFS
 ;;; (bfs [operadores: Conjunto de Operadores] [abertos: Lista de abertos inicializada com o no incial] [fechados: Lista de fechados vazia] [pop-no: Atomo que guarda o no retirado da lista de abertos] [it: Atmo de controlo dentro da funÃ§Ã£o recursiva] [bool: Atmo que impede que a funÃ§Ã£o recursiva de devolver nil na primeira iteraÃ§Ã£o]
 (defun bfs (objetivo operadores &optional (abertos (list (no-teste))) fechados pop-no (it 1)(bool 0)(starting-time (get-universal-time)))
  (cond
   ((and (not(eq bool 1))(null abertos)) nil)
   ((eq it 1) (bfs objetivo operadores (cdr abertos) (append (list (car abertos))fechados) (car abertos) 2 (+ bool 1) starting-time))
-  ((not (eq nil (sucessor-e-objetivo (sucessores pop-no operadores) objetivo))) (list (sucessor-e-objetivo (sucessores pop-no operadores) objetivo)(+(length abertos)(length fechados))(- (length fechados) 1)(/ (length fechados) (+ (length fechados)(length abertos))) (- (get-universal-time) starting-time)))
+  ((not (eq nil (sucessor-e-objetivo (sucessores pop-no operadores) objetivo))) (list (sucessor-e-objetivo (sucessores pop-no operadores) objetivo)(+(length (sucessores pop-no operadores))(length abertos)(length fechados))(- (length fechados) 1)(/ (length fechados) (+ (length (sucessores pop-no operadores))(length fechados)(length abertos))) (- (get-universal-time) starting-time)))
   ((eq it 2) (bfs objetivo operadores (append abertos (compile-sucessores-fechados (compile-sucessores-abertos (sucessores pop-no operadores) abertos) fechados)) fechados pop-no 1 1 starting-time))  
  )
 )
@@ -204,7 +205,7 @@ Na teoria dos grafos, busca em profundidade é um algoritmo usado para realizar 
   ((eq it 1)(dls objetivo depth operadores (butlast abertos) (append (list (car (last abertos))) fechados) (car (last abertos)) 2 (+ bool 1) starting-time))
   ((and (eq it 2)(< (no-profundidade pop-no) depth))(dls objetivo depth operadores abertos fechados pop-no 3 1 starting-time))
   ((and (eq it 2)(>= (no-profundidade pop-no) depth))(dls objetivo depth operadores abertos fechados pop-no 1 1 starting-time))
-  ((and (eq it 3)(sucessor-e-objetivo (sucessores pop-no operadores) objetivo)) (list (sucessor-e-objetivo (sucessores pop-no operadores) objetivo)(+(length abertos)(length fechados))(- (length fechados) 1)(/ (length fechados) (+ (length fechados)(length abertos)))(- (get-universal-time) starting-time) ))
+  ((and (eq it 3)(sucessor-e-objetivo (sucessores pop-no operadores) objetivo)) (list (sucessor-e-objetivo (sucessores pop-no operadores) objetivo)(+(length (sucessores pop-no operadores))(length abertos)(length fechados))(- (length fechados) 1)(/ (length fechados) (+ (length (sucessores pop-no operadores))(length fechados)(length abertos)))(- (get-universal-time) starting-time) ))
   (t (dls objetivo depth operadores (append (compile-sucessores-fechados (compile-sucessores-abertos (sucessores pop-no operadores) abertos) fechados) abertos) fechados pop-no 1 1 starting-time))
  )
 )
@@ -214,6 +215,19 @@ Na teoria dos grafos, busca em profundidade é um algoritmo usado para realizar 
 
 ## A* (A* Search Algorithm)
 É um algoritmo de pesquisa que é utilizado para encontrar o caminho mais curto entre um ponto inicial e um ponto final. É um algoritmo útil que é muitas vezes utilizado para a travessia do mapa a fim de encontrar o caminho mais curto.
+
+```LISP
+;;; ImplementaÃ§Ã£o do A*.
+;;; (a* [operadores: Conjunto de Operadores] [abertos: Lista de abertos inicializada com o no incial] [fechados: Lista de fechados vazia] [pop-no: Atomo que guarda o no retirado da lista de abertos] [it: Atmo de controlo dentro da funÃ§Ã£o recursiva] [bool: Atmo que impede que a funÃ§Ã£o recursiva de devolver nil na primeira iteraÃ§Ã£o]
+(defun a* (objetivo operadores &optional (abertos (list (no-teste))) fechados pop-no (it 3)(bool 0)(starting-time (get-universal-time)))
+ (cond
+  ((and (not(eq bool 1))(null abertos)) nil) ;;; SE A LISTA DE ABERTOS FOR NULL ENTÃƒO NÃƒO EXSITE NO OBJETIVO
+  ((eq it 3) (a* objetivo operadores (abertos-sem-no-menor-custo-a* abertos (pos-no-menor-custo-a* abertos)) fechados (no-menor-custo-a* abertos) 0 (+ bool 1) starting-time)) ;;; RETIRA O NO DE MENOR CUSTO DE ABERTOS, GUARDA REFERENCIA NO "NO-POP"
+  ((no-objetivop pop-no objetivo) (list pop-no (+(length (sucessores pop-no operadores))(length abertos)(length fechados)) (length fechados) (/ (length fechados) (+ (length (sucessores pop-no operadores))(length fechados)(length abertos)))(- (get-universal-time) starting-time) )) ;;; SE ALGUM NO SUCESSOR FOR NO OBJETIVO DEVOLVE
+  (t (a* objetivo operadores (append abertos (compile-sucessores-fechados-a* (compile-sucessores-abertos-a* (sucessores pop-no operadores) abertos) fechados)) (append (list pop-no) fechados) pop-no 3 1 starting-time)) ;;; SENAO ABERTOS RECEBE NOS SUCESSORES NAO REPETIDOS OU REPETIDOS COM MENOR CUSTO , FECHADOS RECEBE O "NO-POP"
+ )
+)
+```
 
 ### No de menor custo
 A nossa implementação do algoritmo inves de ordenar-nos e carregar o de menor custo (Primeiro ordenado), procura diretamente na lista o de menor custo sem ordenar:
@@ -309,7 +323,8 @@ Um tabuleiro com mais 3 caixas com 3 arestas é melhor que um tabuleiro com 3 ca
 
 *h(x)=m(x)*
 
-*m(x) é o $\sum$( 4 - $\sum$( numero de arestas vizinhas de um nó-caixa))*
+*m(x) é o $\sum$(Numero de ocorrencias da caixa_i * 4-i)<br>
+<p>&nbsp &nbsp &nbsp &nbsp &nbsp &nbsp i=0 -> 4
 
 ![alt text](hueristica-exemplo.png "hueristica-exemplo.png")
 
@@ -331,8 +346,8 @@ Para poder comparar a eficácia dos 4 algoritmos funcionais foi feito uma tabela
 
 | Problema         | Nós Gerados   | Nós Expandidos | *g(x)*   Profundidade  |Penetrância|Execução em segundos
 | --------- | :-------:|:--------:|:-------:| :---------:| :---------:| 
-| A |   137  |  9    |  2    | 10/137       |0 
-| B |   ~12   |  0   |   1   | ~1/12        |0 
+| A |   152  |  9    |  2    | 10/152      |0 
+| B |   16   |  0   |   1   | 1/16       |0 
 | C |   Memory Bound   |  Memory Bound    |  Memory Bound    | Memory Bound          |Memory Bound
 | D |   Memory Bound   |  Memory Bound    |  Memory Bound    | Memory Bound          |Memory Bound
 | E |   Memory Bound   |  Memory Bound    |  Memory Bound    | Memory Bound          |Memory Bound
@@ -345,8 +360,8 @@ Para poder comparar a eficácia dos 4 algoritmos funcionais foi feito uma tabela
 
 | Problema         | Nós Gerados   | Nós Expandidos | *g(x)*   Profundidade  |Penetrância|Execução em segundos
 | --------- | :-------:|:--------:|:-------:| :---------:| :---------:| 
-| A |   62  |  4    |  2    | 5/62      |0 
-| B |   ~12   |  0   |   1   | ~1/12        |0 
+| A |   77  |  4    |  2    | 5/77      |0 
+| B |   16   |  0   |   1   | 1/16        |0 
 | C |   Memory Bound   |  Memory Bound    |  Memory Bound    | Memory Bound          |Memory Bound
 | D |   Memory Bound   |  Memory Bound    |  Memory Bound    | Memory Bound          |Memory Bound
 | E |   Memory Bound   |  Memory Bound    |  Memory Bound    | Memory Bound          |Memory Bound
@@ -358,8 +373,8 @@ Para poder comparar a eficácia dos 4 algoritmos funcionais foi feito uma tabela
 
 | Problema         | Nós Gerados   | Nós Expandidos | *g(x)*   Profundidade  |Penetrância| Execução em segundos
 | --------- | :-------:|:--------:|:-------:| :---------:| :---------:| 
-| A |   16  |  2    |  2    | 2/17       |0 
-| B |   1   |  1   |   1   | 1        |0 
+| A |   45  |  2    |  2    | 2/45       |0 
+| B |   29   |  1   |   1   | 1/29        |0 
 | C |   Memory Bound   |  Memory Bound    |  Memory Bound    | Memory Bound          |Memory Bound
 | D |   Memory Bound   |  Memory Bound    |  Memory Bound    | Memory Bound          |Memory Bound
 | E |   Memory Bound   |  Memory Bound    |  Memory Bound    | Memory Bound          |Memory Bound
@@ -370,20 +385,17 @@ Para poder comparar a eficácia dos 4 algoritmos funcionais foi feito uma tabela
 
 | Problema         | Nós Gerados   | Nós Expandidos | *g(x)*   Profundidade  |Penetrância|Execução em segundos
 | --------- | :-------:|:--------:|:-------:| :---------:| :---------:| 
-| A |   45  |  4    |  4    | 2/23      |0 
-| B |   1   |  1   |   1   | 1       |0 
-| C |   126   |  10   |  10    | 10/127          | 0
+| A |   100  |  7    |  7    | 7/100      |0 
+| B |   75   |  5   |   5   | 1/15       |0 
+| C |   143   |  10   |  10    | 10/143          | 0
 | D |   Memory Bound   |  Memory Bound    |  Memory Bound    | Memory Bound          |Memory Bound
-| E |   690   |  24    |  24    | 24/691          |0
+| E |   756   |  26    |  26    | 26/756          |0
 | F |   Memory Bound   |  Memory Bound    |  Memory Bound    | Memory Bound          |Memory Bound
 ---
 ---
 <br>
 
 # Projeto Nº1: Época Normal 
-
-
-![alt text](/Manuais/img/ips_logo.png?sanitize=true "IPS logo")
 
 
 ## Inteligência Artificial 22/23
@@ -404,7 +416,7 @@ Miguel Rodrigues - 202001391
 
 João Marques - 202000432
 
-Gabriel Garcia - 
+Gabriel Garcia - 202002361
 
 # Indice
 
@@ -423,7 +435,7 @@ Este documento servirá de manual de utilizador, guiará a instalação de todo 
 
 # Instalação
 
-É necessaio instalar um compilador de LISP e o respetivo editor, recomendamos o LispWorks.
+É necessario instalar um compilador de LISP e o respetivo editor, recomendamos o LispWorks.
 
 Lispworks é uma Integrated cross-platform development tool for Common Lisp  [aqui](http://www.lispworks.com/products/lispworks.html)
 
