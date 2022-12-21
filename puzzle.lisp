@@ -175,12 +175,25 @@
 )
 
 ;;(get-arco-na-posicao 2 3 (get-arcos-horizontais (no-teste)))
-(defun bom-vizinho (no &optional (cl (length (car (no-estado no)))) (iL 1)(posL 1)(iC 1)(posC 1)(soma 0)(itNumber 1))
+(defun bom-vizinho (no &optional (cl (length (car (no-estado no)))) (iL 1)(posL 1)(iC 1)(posC 1)(itNumber 1)(c0 0)(c1 0)(c2 0)(c3 0)(c4 0))
+ (cond
+  ((equal itNumber cl) (+ (* 4 c0)(* 3 c1)(* 2 c2)(* 1 c3)(* 0 c4)))
+  ((equal cl posC) (bom-vizinho no cl 1 (+ posL 1) (+ iC 1) 1 (+ itNumber 1) c0 c1 c2 c3 c4))
+  ((equal 0 (+ (get-arco-na-posicao posL iL (get-arcos-horizontais no))(get-arco-na-posicao (+ 1 posL) iL (get-arcos-horizontais no))(get-arco-na-posicao posC iC (get-arcos-verticais no))(get-arco-na-posicao (+ 1 posC) iC (get-arcos-verticais no)))) (bom-vizinho no cl (+ iL 1) posL iC (+ posC 1) itNumber (1+ c0) c1 c2 c3 c4))
+  ((equal 1 (+ (get-arco-na-posicao posL iL (get-arcos-horizontais no))(get-arco-na-posicao (+ 1 posL) iL (get-arcos-horizontais no))(get-arco-na-posicao posC iC (get-arcos-verticais no))(get-arco-na-posicao (+ 1 posC) iC (get-arcos-verticais no)))) (bom-vizinho no cl (+ iL 1) posL iC (+ posC 1) itNumber c0 (1+ c1) c2 c3 c4))
+  ((equal 2 (+ (get-arco-na-posicao posL iL (get-arcos-horizontais no))(get-arco-na-posicao (+ 1 posL) iL (get-arcos-horizontais no))(get-arco-na-posicao posC iC (get-arcos-verticais no))(get-arco-na-posicao (+ 1 posC) iC (get-arcos-verticais no)))) (bom-vizinho no cl (+ iL 1) posL iC (+ posC 1) itNumber c0 c1 (1+ c2) c3 c4))
+  ((equal 3 (+ (get-arco-na-posicao posL iL (get-arcos-horizontais no))(get-arco-na-posicao (+ 1 posL) iL (get-arcos-horizontais no))(get-arco-na-posicao posC iC (get-arcos-verticais no))(get-arco-na-posicao (+ 1 posC) iC (get-arcos-verticais no)))) (bom-vizinho no cl (+ iL 1) posL iC (+ posC 1) itNumber c0 c1 c2 (1+ c3) c4))
+  ((equal 4 (+ (get-arco-na-posicao posL iL (get-arcos-horizontais no))(get-arco-na-posicao (+ 1 posL) iL (get-arcos-horizontais no))(get-arco-na-posicao posC iC (get-arcos-verticais no))(get-arco-na-posicao (+ 1 posC) iC (get-arcos-verticais no)))) (bom-vizinho no cl (+ iL 1) posL iC (+ posC 1) itNumber c0 c1 c2 c3 (1+ c4)))
+ )
+)
+
+;;(get-arco-na-posicao 2 3 (get-arcos-horizontais (no-teste)))
+(defun bom-vizinho2 (no &optional (cl (length (car (no-estado no)))) (iL 1)(posL 1)(iC 1)(posC 1)(soma 0)(itNumber 1))
  (cond
   ((equal itNumber cl) soma)
-  ((equal cl posC) (bom-vizinho no cl 1 (+ posL 1) (+ iC 1) 1 soma (+ itNumber 1)))
-  ((equal nil (remove nil (list (get-arco-na-posicao posL iL (get-arcos-horizontais no))(get-arco-na-posicao (+ 1 posL) iL (get-arcos-horizontais no))(get-arco-na-posicao posC iC (get-arcos-verticais no))(get-arco-na-posicao (+ 1 posC) iC (get-arcos-verticais no))))) (bom-vizinho no cl (+ iL 1) posL iC (+ posC 1)(+ soma 4) itNumber))
-  (t (bom-vizinho no cl (+ iL 1) posL iC (+ posC 1)  (+ soma (- 4 (apply '+ (remove nil (list (get-arco-na-posicao posL iL (get-arcos-horizontais no))(get-arco-na-posicao (+ 1 posL) iL (get-arcos-horizontais no))(get-arco-na-posicao posC iC (get-arcos-verticais no))(get-arco-na-posicao (+ 1 posC) iC (get-arcos-verticais no))))))) itNumber))
+  ((equal cl posC) (bom-vizinho2 no cl 1 (+ posL 1) (+ iC 1) 1 soma (+ itNumber 1)))
+  ((equal nil (remove nil (list (get-arco-na-posicao posL iL (get-arcos-horizontais no))(get-arco-na-posicao (+ 1 posL) iL (get-arcos-horizontais no))(get-arco-na-posicao posC iC (get-arcos-verticais no))(get-arco-na-posicao (+ 1 posC) iC (get-arcos-verticais no))))) (bom-vizinho2 no cl (+ iL 1) posL iC (+ posC 1)(+ soma 4) itNumber))
+  (t (bom-vizinho2 no cl (+ iL 1) posL iC (+ posC 1)  (+ soma (- 4 (apply '+ (remove nil (list (get-arco-na-posicao posL iL (get-arcos-horizontais no))(get-arco-na-posicao (+ 1 posL) iL (get-arcos-horizontais no))(get-arco-na-posicao posC iC (get-arcos-verticais no))(get-arco-na-posicao (+ 1 posC) iC (get-arcos-verticais no))))))) itNumber))
  )
 )
 
@@ -188,6 +201,7 @@
  (cond
   ((equal (get-heuristicaop) 1) (- objective (nCaixasFechadas no)))
   ((equal (get-heuristicaop) 2) (bom-vizinho no))
+  ((equal (get-heuristicaop) 3) (bom-vizinho2 no))
  )
 )
 
