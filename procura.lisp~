@@ -8,7 +8,7 @@
  (cond
   ((and (not(eq bool 1))(null abertos)) nil) ;;; SE A LISTA DE ABERTOS FOR NULL ENTÃO NÃO EXSITE NO OBJETIVO
   ((eq it 3) (a* objetivo operadores (abertos-sem-no-menor-custo-a* abertos (pos-no-menor-custo-a* abertos)) fechados (no-menor-custo-a* abertos) 0 (+ bool 1) starting-time)) ;;; RETIRA O NO DE MENOR CUSTO DE ABERTOS, GUARDA REFERENCIA NO "NO-POP"
-  ((sucessor-e-objetivo (sucessores pop-no operadores) objetivo) (list (sucessor-e-objetivo (sucessores pop-no operadores) objetivo)(+(length abertos)(length fechados)) (+ 1 (length fechados)) (/ (1+ (length fechados)) (+ (1+ (length fechados))(length abertos)))(- (get-universal-time) starting-time) )) ;;; SE ALGUM NO SUCESSOR FOR NO OBJETIVO DEVOLVE
+  ((no-objetivop pop-no objetivo) (list pop-no (+(length abertos)(length fechados)) (length fechados) (/ (length fechados) (+ (length fechados)(length abertos)))(- (get-universal-time) starting-time) )) ;;; SE ALGUM NO SUCESSOR FOR NO OBJETIVO DEVOLVE
   (t (a* objetivo operadores (append abertos (compile-sucessores-fechados-a* (compile-sucessores-abertos-a* (sucessores pop-no operadores) abertos) fechados)) (append (list pop-no) fechados) pop-no 3 1 starting-time)) ;;; SENAO ABERTOS RECEBE NOS SUCESSORES NAO REPETIDOS OU REPETIDOS COM MENOR CUSTO , FECHADOS RECEBE O "NO-POP"
  )
 )
