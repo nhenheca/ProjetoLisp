@@ -82,7 +82,6 @@
  (format t "|                         |~%")
  (format t "|       1 - DADA          |~%")
  (format t "|       2 - GRUPO         |~%")
- (format t "|       3 - GRUPO2        |~%")
  (format t "|                         |~%")
  (format t "|       0 - Voltar        |~%")
  (format t "|                         |~%")
@@ -109,7 +108,6 @@
   (cond
    ((eq 1 op) (setq heuristicaop op)(write-to-file (a* (get-objective) (operadores (get-cl)))))
    ((eq 2 op) (setq heuristicaop op)(write-to-file (a* (get-objective) (operadores (get-cl)))))
-   ((eq 3 op) (setq heuristicaop op)(write-to-file (a* (get-objective) (operadores (get-cl)))))
    ((eq 0 op) (menu-escolher-algoritmo))
    (t (menu-escolher-heuristica))
   )
